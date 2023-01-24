@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/01/22 21:35:09 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/01/24 19:02:22 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_mlx
   float   x;
   float   y;
   int   turn_dir;
-  int   walk_dir;
+  int     walk_dir;
   float   rot_angle;
   float   walkspeed;
   float   turnspeed;
@@ -71,10 +71,48 @@ int	ft_error(int i)
 		return (ft_putstr_fd("Error initializing mlx", 2));
 	return(1);	
 }
-// int ft_raycast(t_mlx *p)
+
+// void  ft_ver()
 // {
-//   float fov = 60 * (M_PI / )
+  
 // }
+
+void  castone(t_mlx *p, float ray)
+{
+  float x;
+  float y;
+  // float ay;
+  // float ax;
+  int i;
+  i = 1;
+  x = p->x + 5 - cos(ray) * i;
+  y = p->y + 5 - sin(ray) * i;
+  while (worldMap[(int)y / 50][(int)x / 50] == 0)
+  {
+    x = p->x + 5 - cos(ray) * i;
+    y = p->y + 5 - sin(ray) * i;
+    mlx_pixel_put(p->mlx_p, p->mlx_win, x, y, 16711680);
+    //ft_ver();
+    i += 3;
+  }
+}
+
+int ft_raycast(t_mlx *p)
+{
+  float fov = 60 * (M_PI / 180);
+  float i;
+  float rangle;
+  i = 0;
+  rangle = p->rot_angle - (fov / 2);
+  while (i < 1200 / 4)
+  {
+    castone(p, rangle);
+    rangle += fov / (1200 / 4);
+    i++;
+  }
+  return (0);
+  
+}
 void  redraw(t_mlx *p)
 {
   int i;
@@ -108,12 +146,12 @@ void  redraw(t_mlx *p)
   int k;
   k = 1;
   mlx_destroy_image(p->mlx_p, img_ptr);
-  while (k <= 50)
+  while (k <= 100)
   {
     mlx_pixel_put(p->mlx_p, p->mlx_win, p->x + 5 - cos(p->rot_angle) * k, p->y + 5 - sin(p->rot_angle) * k, 16711680);
     k++;
   }
-  //ft_raycast(p);
+  ft_raycast(p);
 }
 
 t_mlx *p_init(void *mlx_p, void *mlx_win, int x, int y)
@@ -129,7 +167,7 @@ t_mlx *p_init(void *mlx_p, void *mlx_win, int x, int y)
     p->turn_dir = 0;
     p->rot_angle = M_PI / 2;
     p->turnspeed = 7 * (M_PI / 180);
-    p->walkspeed = 2;
+    p->walkspeed = 5;
     return (p);
 }
 
@@ -145,17 +183,6 @@ int  step(void *ptr)
   step = (p->walk_dir * p->walkspeed);
   x = p->x + 5 + cos(p->rot_angle) * (step);
   y = p->y + 5 + sin(p->rot_angle) * (step);
-  //printf("%f\n", x - p->x);
-  // if (x > p->x + 10)
-  //   x += 5;
-  // else if (y < p->y + 10)
-  //   x -= 5;  
-  // if (y > p->y + 10)
-  //   y += 5;
-  // else if (y < p->y + 10)
-  //   y -= 5;    
-  // if (x < 55 || x > 1200 - 55|| y < 55 || y > 1200 - 55)
-  //   return (0);
   if (worldMap[(int)y / 50][(int)x / 50] != 0)
     return (0);
   p->x = x - 5;
@@ -175,8 +202,6 @@ int key_hook(int key, t_mlx *p)
     p->turn_dir = -1;
   if (key == 124 || key == 2)
     p->turn_dir = 1;
-  //step(p);        
-  //redraw(p);
   return (0); 
 }
 
@@ -222,7 +247,7 @@ int main()
   redraw(p);
   mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
-  mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);
+  //mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);
   mlx_loop_hook(p->mlx_p, step, (void *)p);
 	mlx_loop(mlx_p);
 }
