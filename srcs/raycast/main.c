@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/01/24 19:02:22 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/01/26 22:41:01 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,15 @@ typedef struct s_mlx
   float   turnspeed;
 } t_mlx;
 
+typedef struct s_ray
+{
+  float ray;
+  float vx_inter;
+  float vy_inter;
+  float dx;
+  float dy;
+  int whface;
+} t_ray;
 int worldMap[24][24]=
 {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -72,12 +81,85 @@ int	ft_error(int i)
 	return(1);	
 }
 
-// void  ft_ver()
-// {
-  
-// }
+t_ray *ft_norm(t_ray *ray)
+{
+  while (ray->ray >= 2 * M_PI)
+   ray->ray -= 2 * M_PI;
+  if (ray->ray <= 0)
+    ray->ray = (2 * M_PI) + ray->ray; 
+  return (ray);  
+}
 
-void  castone(t_mlx *p, float ray)
+void  intersec(t_mlx *p, t_ray *ray)
+{
+  printf("%f\n", ray->ray);
+  if (ray->whface == 1)
+  {
+    ray->vy_inter = floor(p->y / 50) * 50 + 1;
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(ray->ray));
+    ray->dx = -((50/tan(ray->ray)));
+    ray->dy = -50;
+  }
+  else if (ray->whface == 2)
+  {
+    ray->vy_inter = floor(p->y / 50) * 50 + 1;
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(ray->ray));
+    ray->dx = -((50/tan(ray->ray)));
+    ray->dy = -50;
+  }
+  else if (ray->whface == 3)
+  {
+    ray->vy_inter = floor(p->y / 50) * 50 - 1 + 50; 
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(ray->ray));
+    ray->dx = ((50/tan(ray->ray)));
+    ray->dy = 50;
+  }
+  else if (ray->whface == 4)
+  {
+    ray->vy_inter = floor(p->y / 50) * 50 - 1 + 50;
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(ray->ray));
+    ray->dx = ((50/tan(ray->ray)));
+    ray->dy = 50;
+  }
+}
+void  ft_hor(t_mlx *p, t_ray *ray)
+{
+  int h;
+  int w;
+  w = 10;
+  h = 10;
+  void  *img;
+  printf("whface = %d\n", ray->whface);
+  intersec(p, ray);
+  printf("px = %f\nvx = %f\nvy = %f\ndx = %f\ndy = %f\n", p->x, ray->vx_inter, ray->vy_inter, ray->dx, ray->dy);
+  img = mlx_xpm_file_to_image(p->mlx_p, "inter.xpm", &h, &w);
+   if (ray->vy_inter > 1200 || ray->vy_inter < 0 || ray->vx_inter > 1200 || ray->vx_inter < 0)
+      return ;
+  while (worldMap[(int)ray->vy_inter/50][(int)ray->vx_inter/50] == 0)
+  {
+  
+    mlx_put_image_to_window(p->mlx_p, p->mlx_win, img, ray->vx_inter + 5, ray->vy_inter);
+    ray->vy_inter += ray->dy;
+    ray->vx_inter += ray->dx;
+    if (ray->vy_inter > 1200 || ray->vy_inter < 0 || ray->vx_inter > 1200 || ray->vx_inter < 0)
+      break;
+  }
+  mlx_destroy_image(p->mlx_p, img);
+}
+
+int raydir(float ray)
+{
+  if (ray >= 0 && ray <= M_PI / 2)
+    return (1);
+  if (ray > M_PI / 2 / 2 && ray <= M_PI)
+    return (2);
+  if (ray > M_PI && ray <= (3 * M_PI) / 2)
+    return (3);
+  if (ray > (3 * M_PI) / 2 && ray <= 2 * M_PI)
+    return (4);
+  return (0);        
+}
+void  castone(t_mlx *p, t_ray *ray)
 {
   float x;
   float y;
@@ -85,31 +167,34 @@ void  castone(t_mlx *p, float ray)
   // float ax;
   int i;
   i = 1;
-  x = p->x + 5 - cos(ray) * i;
-  y = p->y + 5 - sin(ray) * i;
+  x = p->x + 5 - cos(ray->ray) * i;
+  y = p->y + 5 - sin(ray->ray) * i;
   while (worldMap[(int)y / 50][(int)x / 50] == 0)
   {
-    x = p->x + 5 - cos(ray) * i;
-    y = p->y + 5 - sin(ray) * i;
+    x = p->x + 5 - cos(ray->ray) * i;
+    y = p->y + 5 - sin(ray->ray) * i;
     mlx_pixel_put(p->mlx_p, p->mlx_win, x, y, 16711680);
-    //ft_ver();
-    i += 3;
+    i += 4;
   }
+ ray = ft_norm(ray);
+  ray->whface = raydir(ray->ray);
+  ft_hor(p, ray);
 }
 
 int ft_raycast(t_mlx *p)
 {
   float fov = 60 * (M_PI / 180);
   float i;
-  float rangle;
+  t_ray *ray;
+  ray = malloc(sizeof(t_ray));
   i = 0;
-  rangle = p->rot_angle - (fov / 2);
-  while (i < 1200 / 4)
-  {
-    castone(p, rangle);
-    rangle += fov / (1200 / 4);
-    i++;
-  }
+  ray->ray = p->rot_angle - (fov / 2);
+  // while (i < 1200 / 20)
+  // {
+    castone(p, ray);
+  //   ray->ray += fov / (1200 / 20);
+  //   i++;
+  // }
   return (0);
   
 }
