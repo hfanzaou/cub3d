@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/02 02:36:26 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/02 02:39:56 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,25 @@ typedef struct s_mlx
   float   x;
   float   y;
   int   turn_dir;
-  int   walk_dir;
+  int     walk_dir;
   float   rot_angle;
   float   walkspeed;
   float   turnspeed;
 } t_mlx;
 
+typedef struct s_ray
+{
+  float ray;
+  float vx_inter;
+  float vy_inter;
+  float hx_inter;
+  float hy_inter;
+  float dx;
+  float dy;
+  float tx;
+  float ty;
+  int whface;
+} t_ray;
 int worldMap[24][24]=
 {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -71,10 +84,170 @@ int	ft_error(int i)
 		return (ft_putstr_fd("Error initializing mlx", 2));
 	return(1);	
 }
-// int ft_raycast(t_mlx *p)
-// {
-//   float fov = 60 * (M_PI / )
-// }
+
+t_ray *ft_norm(t_ray *ray)
+{
+  while (ray->ray > 2 * M_PI)
+   ray->ray -= 2 * M_PI;
+  if (ray->ray < 0)
+    ray->ray = (2 * M_PI) + ray->ray; 
+  return (ray);  
+}
+
+void  intersec(t_mlx *p, t_ray *ray)
+{
+  float angle;
+  printf("%f\n", ray->ray);
+  if (ray->whface == 1)
+  {
+    ray->vy_inter = floor((p->y) / 50) * 50 - 1;
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(ray->ray));
+    ray->dx = -((50/tan(ray->ray)));
+    ray->dy = -50;
+  }
+  else if (ray->whface == 2)
+  {
+    angle = ray->ray; 
+    ray->vy_inter = floor((p->y) / 50) * 50 - 1;
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(angle));
+    ray->dx = -((50/tan(angle)));
+    ray->dy = -50;
+  }
+  else if (ray->whface == 3)
+  {
+    angle =ray->ray;
+    ray->vy_inter = floor((p->y) / 50) * 50 + 50; 
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(angle));
+    ray->dx = ((50/tan(angle)));
+    ray->dy = 50;
+  }
+  else if (ray->whface == 4)
+  {
+    angle = ray->ray;
+    ray->vy_inter = floor((p->y / 50)) * 50 + 50;
+    ray->vx_inter = p->x + ((ray->vy_inter - p->y)/tan(angle));
+    ray->dx = ((50/tan(angle)));
+    ray->dy = 50;
+  }
+}
+
+void  intersec2(t_mlx *p, t_ray *ray)
+{
+  float angle;
+  printf("%f\n", ray->ray);
+  if (ray->whface == 1)
+  {
+    ray->hx_inter = floor((p->x) / 50) * 50 - 1;
+    ray->hy_inter = p->y - ((p->x - ray->hx_inter) * tan(ray->ray));
+    ray->ty = -((50 * tan(ray->ray)));
+    ray->tx = -50;
+  }
+  else if (ray->whface == 2)
+  {
+    angle = 2 * M_PI - ray->ray; 
+    ray->hx_inter = floor((p->x) / 50) * 50 + 50;
+    ray->hy_inter = p->y - ((ray->hx_inter - p->x) / tan(angle));
+    ray->ty = -((50 * tan(angle)));
+    ray->tx = 50;
+  }
+  else if (ray->whface == 3)
+  {
+    angle = ray->ray;
+    ray->hx_inter = floor((p->x) / 50) * 50 + 50; 
+    ray->hy_inter = p->y + ((ray->hx_inter - p->x) * tan(angle));
+    ray->ty = ((50 * tan(angle)));
+    ray->tx = 50;
+  }
+  else if (ray->whface == 4)
+  {
+    angle = ray->ray;
+    ray->hx_inter = floor((p->x / 50)) * 50 - 1;
+    ray->hy_inter = p->y + ((p->x - ray->hx_inter) * tan(angle));
+    ray->ty = ((50 * tan(angle)));
+    ray->tx = -50;
+  }
+}
+void  ft_hor(t_mlx *p, t_ray *ray, int f)
+{
+  int h;
+  int w;
+  w = 10;
+  h = 10;
+  void  *img;
+  printf("whface = %d\n", ray->whface);
+  if (f == 1)
+    intersec(p, ray);
+  else 
+    intersec2(p, ray);  
+  printf("px = %f\nhx = %f\nhy = %f\ntx = %f\nty = %f\n", p->x, ray->hx_inter, ray->hy_inter, ray->tx, ray->ty);
+  img = mlx_xpm_file_to_image(p->mlx_p, "inter.xpm", &h, &w);
+   if (ray->hy_inter > 1200 || ray->hy_inter < 0 || ray->hx_inter > 1200 || ray->hx_inter < 0)
+      return ;
+  while (worldMap[(int)ray->hy_inter/50][(int)ray->hx_inter/50] == 0)
+  {
+  
+    mlx_put_image_to_window(p->mlx_p, p->mlx_win, img, ray->hx_inter + 4, ray->hy_inter);
+    ray->hy_inter += ray->ty;
+    ray->hx_inter += ray->tx;
+    if (ray->hy_inter > 1200 || ray->hy_inter < 0 || ray->hx_inter > 1200 || ray->hx_inter < 0)
+      break;
+  }
+  mlx_put_image_to_window(p->mlx_p, p->mlx_win, img, ray->hx_inter - 2, ray->hy_inter);
+  mlx_destroy_image(p->mlx_p, img);
+}
+int raydir(float ray)
+{
+  if (ray >= 0 && ray <= M_PI / 2)
+    return (1);
+  if (ray > M_PI / 2 / 2 && ray <= M_PI)
+    return (2);
+  if (ray > M_PI && ray <= (3 * M_PI) / 2)
+    return (3);
+  if (ray > (3 * M_PI) / 2 && ray <= 2 * M_PI)
+    return (4);
+  return (0);        
+}
+void  castone(t_mlx *p, t_ray *ray)
+{
+  float x;
+  float y;
+  // float ay;
+  // float ax;
+  int i;
+  i = 0;
+  x = p->x + 5 - cos(ray->ray) * i;
+  y = p->y + 5 - sin(ray->ray) * i;
+  while (worldMap[(int)y / 50][(int)x / 50] == 0)
+  {
+    x = p->x + 5 - cos(ray->ray) * i;
+    y = p->y + 5 - sin(ray->ray) * i;
+    mlx_pixel_put(p->mlx_p, p->mlx_win, x, y, 16711680);
+    i += 2;
+  }
+ ray = ft_norm(ray);
+ //printf("ray = %f\n %f\n", ray->ray);
+  ray->whface = raydir(ray->ray);
+  //ft_hor(p, ray, 1);
+  ft_hor(p, ray, 0);
+}
+
+int ft_raycast(t_mlx *p)
+{
+  float fov = 60 * (M_PI / 180);
+  float i;
+  t_ray *ray;
+  ray = malloc(sizeof(t_ray));
+  i = 0;
+  ray->ray = p->rot_angle - (fov / 2);
+//    while (i < 1200 / 10)
+//  {
+    castone(p, ray);
+  //   ray->ray += fov / (1200 / 10);
+  //   i++;
+  // }
+  return (0);
+  
+}
 void  redraw(t_mlx *p)
 {
   int i;
@@ -108,12 +281,12 @@ void  redraw(t_mlx *p)
   int k;
   k = 1;
   mlx_destroy_image(p->mlx_p, img_ptr);
-  while (k <= 50)
+  while (k <= 100)
   {
     mlx_pixel_put(p->mlx_p, p->mlx_win, p->x + 5 - cos(p->rot_angle) * k, p->y + 5 - sin(p->rot_angle) * k, 16711680);
     k++;
   }
-  //ft_raycast(p);
+  ft_raycast(p);
 }
 
 t_mlx *p_init(void *mlx_p, void *mlx_win, int x, int y)
@@ -129,7 +302,7 @@ t_mlx *p_init(void *mlx_p, void *mlx_win, int x, int y)
     p->turn_dir = 0;
     p->rot_angle = M_PI / 2;
     p->turnspeed = 7 * (M_PI / 180);
-    p->walkspeed = 2;
+    p->walkspeed = 5;
     return (p);
 }
 
@@ -141,21 +314,12 @@ int  step(void *ptr)
   float step;
   float x;
   float y;
+  if (p->walk_dir == 0 && p->turn_dir == 0)
+    return 0;
   p->rot_angle += (p->turn_dir * p->turnspeed);
   step = (p->walk_dir * p->walkspeed);
   x = p->x + 5 + cos(p->rot_angle) * (step);
   y = p->y + 5 + sin(p->rot_angle) * (step);
-  //printf("%f\n", x - p->x);
-  // if (x > p->x + 10)
-  //   x += 5;
-  // else if (y < p->y + 10)
-  //   x -= 5;  
-  // if (y > p->y + 10)
-  //   y += 5;
-  // else if (y < p->y + 10)
-  //   y -= 5;    
-  // if (x < 55 || x > 1200 - 55|| y < 55 || y > 1200 - 55)
-  //   return (0);
   if (worldMap[(int)y / 50][(int)x / 50] != 0)
     return (0);
   p->x = x - 5;
@@ -175,8 +339,6 @@ int key_hook(int key, t_mlx *p)
     p->turn_dir = -1;
   if (key == 124 || key == 2)
     p->turn_dir = 1;
-  //step(p);        
-  //redraw(p);
   return (0); 
 }
 
@@ -205,6 +367,46 @@ int mouse_hook(int x, int y, t_mlx *p)
   return (0);    
 }
 
+void  redraw2(t_mlx *p)
+{
+  int i;
+  int j;
+  int h;
+  int w;
+  void *img_ptr;
+  void *img_ptr2;
+  j = 0;
+  img_ptr = mlx_xpm_file_to_image(p->mlx_p, "file.xpm", &w, &h);
+  img_ptr2 = mlx_xpm_file_to_image(p->mlx_p, "file2.xpm", &w, &h);
+  while (j < 24)
+  {
+    i = 0;
+    h = j * 50;
+    while (i < 24)
+    {
+      w = i * 50;
+      if (worldMap[j][i] != 0)
+        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr, i * 50, j * 50);
+      else
+        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr2, i * 50, j * 50);  
+      i++;
+    }
+    j++;
+  }
+  mlx_destroy_image(p->mlx_p, img_ptr);
+  mlx_destroy_image(p->mlx_p, img_ptr2);
+  img_ptr = mlx_xpm_file_to_image(p->mlx_p, "p.xpm", &w, &h);
+  mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr, p->x, p->y);
+  int k;
+  k = 1;
+  mlx_destroy_image(p->mlx_p, img_ptr);
+  while (k <= 100)
+  {
+    mlx_pixel_put(p->mlx_p, p->mlx_win, p->x + 5 - cos(p->rot_angle) * k, p->y + 5 - sin(p->rot_angle) * k, 16711680);
+    k++;
+  }
+  //ft_raycast(p);
+}
 
 int main()
 {
@@ -219,7 +421,7 @@ int main()
 	if (!mlx_win)
 		return (ft_error(1));
   p = p_init(mlx_p, mlx_win, 19 * 35, 19 * 35);
-  redraw(p);
+  redraw2(p);
   mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
   mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);
