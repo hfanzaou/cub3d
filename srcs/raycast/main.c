@@ -3,18 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/02 02:39:56 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/02 04:51:24 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mlx.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include "cub3d.h"
+
 typedef struct s_mlx
 {
   void  *mlx_p;
@@ -26,6 +23,7 @@ typedef struct s_mlx
   float   rot_angle;
   float   walkspeed;
   float   turnspeed;
+  t_scene *scene;
 } t_mlx;
 
 typedef struct s_ray
@@ -41,47 +39,20 @@ typedef struct s_ray
   float ty;
   int whface;
 } t_ray;
-int worldMap[24][24]=
-{
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
 
-int	ft_putstr_fd(char *str, int fd)
-{
-	while (*str)
-	{
-		write(fd, str, 1);
-		str++;
-	}
-	return(1);
-}
-int	ft_error(int i)
+// int	ft_putstr_fd(char *str, int fd)
+// {
+// 	while (*str)
+// 	{
+// 		write(fd, str, 1);
+// 		str++;
+// 	}
+// 	return(1);
+// }
+int	ft_error2(int i)
 {
 	if (i == 1)
-		return (ft_putstr_fd("Error initializing mlx", 2));
+		ft_putstr_fd("Error initializing mlx", 2);
 	return(1);	
 }
 
@@ -183,7 +154,7 @@ void  ft_hor(t_mlx *p, t_ray *ray, int f)
   img = mlx_xpm_file_to_image(p->mlx_p, "inter.xpm", &h, &w);
    if (ray->hy_inter > 1200 || ray->hy_inter < 0 || ray->hx_inter > 1200 || ray->hx_inter < 0)
       return ;
-  while (worldMap[(int)ray->hy_inter/50][(int)ray->hx_inter/50] == 0)
+  while (p->scene->map[(int)ray->hy_inter/50][(int)ray->hx_inter/50] == '0')
   {
   
     mlx_put_image_to_window(p->mlx_p, p->mlx_win, img, ray->hx_inter + 4, ray->hy_inter);
@@ -217,7 +188,7 @@ void  castone(t_mlx *p, t_ray *ray)
   i = 0;
   x = p->x + 5 - cos(ray->ray) * i;
   y = p->y + 5 - sin(ray->ray) * i;
-  while (worldMap[(int)y / 50][(int)x / 50] == 0)
+  while (p->scene->map[(int)y / 50][(int)x / 50] == '0')
   {
     x = p->x + 5 - cos(ray->ray) * i;
     y = p->y + 5 - sin(ray->ray) * i;
@@ -228,7 +199,7 @@ void  castone(t_mlx *p, t_ray *ray)
  //printf("ray = %f\n %f\n", ray->ray);
   ray->whface = raydir(ray->ray);
   //ft_hor(p, ray, 1);
-  ft_hor(p, ray, 0);
+  //ft_hor(p, ray, 0);
 }
 
 int ft_raycast(t_mlx *p)
@@ -239,12 +210,12 @@ int ft_raycast(t_mlx *p)
   ray = malloc(sizeof(t_ray));
   i = 0;
   ray->ray = p->rot_angle - (fov / 2);
-//    while (i < 1200 / 10)
-//  {
+   while (i < 1200 / 10)
+ {
     castone(p, ray);
-  //   ray->ray += fov / (1200 / 10);
-  //   i++;
-  // }
+    ray->ray += fov / (1200 / 10);
+    i++;
+  }
   return (0);
   
 }
@@ -256,31 +227,40 @@ void  redraw(t_mlx *p)
   int w;
   void *img_ptr;
   void *img_ptr2;
+  void *img_ptr3;
   j = 0;
   img_ptr = mlx_xpm_file_to_image(p->mlx_p, "file.xpm", &w, &h);
   img_ptr2 = mlx_xpm_file_to_image(p->mlx_p, "file2.xpm", &w, &h);
-  while (j < 24)
+  img_ptr3 = mlx_xpm_file_to_image(p->mlx_p, "p.xpm", &w, &h);
+  while (p->scene->map[j])
   {
     i = 0;
     h = j * 50;
-    while (i < 24)
+    while (p->scene->map[j][i])
     {
       w = i * 50;
-      if (worldMap[j][i] != 0)
+      if (p->scene->map[j][i] == '1')
         mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr, i * 50, j * 50);
-      else
-        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr2, i * 50, j * 50);  
+      else if (p->scene->map[j][i] == '0')
+        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr2, i * 50, j * 50);
+      else if (ft_strchr("NSEW", p->scene->map[j][i]))
+      {
+        p->x = 50 * i + 25;
+        p->y = 50 * j + 25;
+        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr2, i * 50, j * 50);
+        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr3, p->x, p->y);
+        p->scene->map[j][i] = '0';
+      }    
       i++;
     }
     j++;
   }
+   mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr3, p->x, p->y);
   mlx_destroy_image(p->mlx_p, img_ptr);
   mlx_destroy_image(p->mlx_p, img_ptr2);
-  img_ptr = mlx_xpm_file_to_image(p->mlx_p, "p.xpm", &w, &h);
-  mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr, p->x, p->y);
+  mlx_destroy_image(p->mlx_p, img_ptr3);
   int k;
   k = 1;
-  mlx_destroy_image(p->mlx_p, img_ptr);
   while (k <= 100)
   {
     mlx_pixel_put(p->mlx_p, p->mlx_win, p->x + 5 - cos(p->rot_angle) * k, p->y + 5 - sin(p->rot_angle) * k, 16711680);
@@ -289,15 +269,13 @@ void  redraw(t_mlx *p)
   ft_raycast(p);
 }
 
-t_mlx *p_init(void *mlx_p, void *mlx_win, int x, int y)
+t_mlx *p_init()
 {
     t_mlx *p;
  
     p = malloc(sizeof(t_mlx));
-    p->mlx_p = mlx_p;
-    p->mlx_win = mlx_win;
-    p->x = x;
-    p->y = y;
+    p->x = 0;
+    p->y = 0;
     p->walk_dir = 0;
     p->turn_dir = 0;
     p->rot_angle = M_PI / 2;
@@ -320,7 +298,7 @@ int  step(void *ptr)
   step = (p->walk_dir * p->walkspeed);
   x = p->x + 5 + cos(p->rot_angle) * (step);
   y = p->y + 5 + sin(p->rot_angle) * (step);
-  if (worldMap[(int)y / 50][(int)x / 50] != 0)
+  if (p->scene->map[(int)y / 50][(int)x / 50] != '0')
     return (0);
   p->x = x - 5;
   p->y = y - 5;
@@ -385,7 +363,7 @@ void  redraw2(t_mlx *p)
     while (i < 24)
     {
       w = i * 50;
-      if (worldMap[j][i] != 0)
+      if (p->scene->map[j][i] != '0')
         mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr, i * 50, j * 50);
       else
         mlx_put_image_to_window(p->mlx_p, p->mlx_win, img_ptr2, i * 50, j * 50);  
@@ -408,20 +386,36 @@ void  redraw2(t_mlx *p)
   //ft_raycast(p);
 }
 
-int main()
+int ft_strlen2(char **map)
+{
+  int i;
+
+  i = 0;
+  while (map[i])
+    i++;
+  return (i) ; 
+}
+int main(int ac, char **av)
 {
 	void	*mlx_p;
 	void	*mlx_win;
   t_mlx *p;
-  
+  if (ac != 2)
+    return (0);
 	mlx_p = mlx_init();
 	if (!mlx_p)
-		return (ft_error(1));
-	mlx_win = mlx_new_window(mlx_p, 50 * 24, 50 * 24, "cub3d");
-	if (!mlx_win)
-		return (ft_error(1));
-  p = p_init(mlx_p, mlx_win, 19 * 35, 19 * 35);
-  redraw2(p);
+		return (ft_error2(1));
+  p = p_init();  
+  p->scene = map_parse(av[1]);
+  p->scene->map_w = ft_strlen(*p->scene->map);
+  p->scene->map_h = ft_strlen2(p->scene->map);
+  printf("%d\n%d\n", p->scene->map_w, p->scene->map_h);    
+	mlx_win = mlx_new_window(mlx_p, p->scene->map_w * 50, p->scene->map_h * 50, "cub3d");
+  p->mlx_p = mlx_p;
+  p->mlx_win = mlx_win;
+  if (!mlx_win)
+		return (ft_error2(1));
+  redraw(p);
   mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
   mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);

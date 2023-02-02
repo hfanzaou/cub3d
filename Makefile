@@ -6,17 +6,19 @@
 #    By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 04:48:24 by hfanzaou          #+#    #+#              #
-#    Updated: 2023/01/18 10:14:06 by hfanzaou         ###   ########.fr        #
+#    Updated: 2023/02/02 02:48:52 by hfanzaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3d
 
-SRCS = srcs/raycast/main.c
+LIBFT = libft.a
+
+SRCS = srcs/raycast/main.c srcs/raycast/map_parse.c srcs/raycast/get_next_line/get_next_line.c srcs/raycast/get_next_line/get_next_line_utils.c
 
 SFLAGS = -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit -I /usr/locale/include
 
-FLAGS = -Wall -Werror -Wextra
+FLAGS = -Wall -Werror -Wextra -D BUFFER_SIZE=1
 
 CC = gcc
 
@@ -24,8 +26,11 @@ OBJS = $(SRCS:.c=.o)
 
 all : $(NAME)
 
-$(NAME) : $(OBJS)
-	$(CC) $(SFLAGS) $(FLAGS) $(OBJS) -o $@
+$(NAME) : $(OBJS) $(LIBFT)
+	$(CC) $(SFLAGS) $(FLAGS) $(OBJS) srcs/raycast/libft/$(LIBFT) -o $@
+
+$(LIBFT) : 
+	make -C srcs/raycast/libft 
 
 %.o : %.c
 	$(CC) $(FLAGS) -c $< -o $@

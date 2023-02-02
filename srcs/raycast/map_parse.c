@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/02 02:31:02 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/02 02:49:21 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,6 @@ char	**read_file(int fd, char *path)
 {
 	char	**file;
 	int		count;
-	int		line_len;
 	int		i;
 
 	i = 0;
@@ -275,9 +274,7 @@ t_scene	*map_parse(char *path)
 {
     t_scene *scene;
 	char	**file;
-	char    *line;
 	int     fd;
-	int		ind;
 
 	fd = path_check(path);
     if (fd == -1)
@@ -292,10 +289,4 @@ t_scene	*map_parse(char *path)
 	print_scene(scene);
 	// ft_free(file);
     return (scene);
-}
-
-int	main(int ac, char **av)
-{
-	if (ac == 2)
-		map_parse(av[1]);
 }
