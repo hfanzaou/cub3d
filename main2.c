@@ -16,7 +16,7 @@ void	print_first_section(char **av)
 	printf("[] = {\n");
 	printf("/* columns rows colors chars-per-pixel */\n");
 	printf("\"%s %s %s %s \",\n", av[1], av[2], av[3], av[4]);
-	printf("\"  c #FF0000\",\n");
+	printf("\"  c #7A7A7A\",\n");
 	printf("\". c #000000\",\n");
 	printf("/* pixels */\n");
 }
@@ -37,7 +37,7 @@ int main(int ac, char **av)
 		i = 0;
 		while (i < atoi(av[1]))
 		{
-			if (i < b || i > atoi(av[1]) - b - 1 || j < b || j > atoi(av[2]) - b - 1)
+			if (i == 0 || i > atoi(av[1]) - b  || j == 0 || j > atoi(av[2]) - b)
 				printf(".");
 			else
 				printf(" ");

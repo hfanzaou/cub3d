@@ -6,7 +6,7 @@
 #    By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 04:48:24 by hfanzaou          #+#    #+#              #
-#    Updated: 2023/02/02 04:54:42 by hfanzaou         ###   ########.fr        #
+#    Updated: 2023/02/10 18:56:23 by hfanzaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ LIBFT = libft.a
 
 SRCS = srcs/raycast/main.c srcs/raycast/map_parse.c srcs/raycast/get_next_line/get_next_line.c srcs/raycast/get_next_line/get_next_line_utils.c
 
-SFLAGS = -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit -I /usr/locale/include
+SFLAGS = -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit -I /usr/locale/include 
 
-FLAGS = -Wall -Werror -Wextra -D BUFFER_SIZE=1
+FLAGS = -Wall -Werror -Wextra -D BUFFER_SIZE=1 -fsanitize=address
 
 CC = gcc
 
