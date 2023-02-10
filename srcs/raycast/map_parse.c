@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/02 02:49:21 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/08 19:35:37 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,13 @@ int check_component(int c)
     return (-1);
 }
 
-int first_nd_last(char  *line, int line_len)
+int first_nd_last(char  *line)
 {
 	int	i;
 
 	i = 0;
     while (line[i])
     {
-		if (line[i] == '\n' && (i == line_len - 1))
-			break ;
         if (line[i] != '1' && line[i] != ' ')
             return (ft_error("Map must be surrounded by walls\n"));
         i++;
@@ -73,16 +71,12 @@ int first_nd_last(char  *line, int line_len)
     return (0);
 }
 
-int mapline_check(char *line, int line_nb, int *player_pos)
+int mapline_check(char *line, int *player_pos)
 {
     int     i;
-    int     line_len;
     int     component;
 
     i = 0;
-    line_len = strlen(line);
-    if ((line_nb == 0) || line[line_len - 1] != '\n')
-        return (first_nd_last(line, line_len));
     while (line[i])
     {
         if (line[i] == ' ')
@@ -90,10 +84,8 @@ int mapline_check(char *line, int line_nb, int *player_pos)
             i++;
             continue ;
         }
-		if (line[i] == '\n' && (i == line_len - 1))
-			break ;
-        if ((i == 0 || i == line_len - 2) && line[i] != '1')
-            return (1);
+        if ((i == 0 || (!line[i + 1])) && line[i] != '1')
+			return (1);
         component = check_component(line[i]);
         if (component == -1)
             return (ft_error("invalid map component\n"));
@@ -110,18 +102,16 @@ int map_check(char **file, t_scene *scene)
 {
 	int	i;
 	int	player_pos;
-	int	line_len;
 
 	i = 0;
 	player_pos = 0;
 	scene->map = malloc(sizeof(char *) * (strlen2(&(*file)) + 1));
     while (*file)
     {
-		if (mapline_check(*file, i, &player_pos))
+		if ((!i || !(file + 1)) && (first_nd_last(*file)))
 			return (1);
-		line_len = strlen(*file);
-		if ((*file)[line_len - 1] == '\n')
-			(*file)[line_len - 1] = '\0';
+		else if (mapline_check(*file, &player_pos))
+			return (1);
         scene->map[i] = *file;
 		i++;
 		file++;
@@ -152,11 +142,6 @@ int	get_elements(t_scene *scene)
 
 int	identifier_check(char **iden_path, t_scene *scene)
 {
-	int	len;
-
-	len = strlen(iden_path[1]);
-	if (iden_path[1][len - 1] == '\n')
-		iden_path[1][len - 1] = '\0';
     if (!strcmp(*iden_path, "NO"))
 		scene->north_tex = iden_path[1];
     else if (!strcmp(*iden_path, "SO"))
@@ -177,29 +162,45 @@ int	identifier_check(char **iden_path, t_scene *scene)
 int elements_check(char ***file, t_scene *scene)
 {
     char    **split;
-	int		i;
 
-	i = 0;
     while (**file)
     {
-		if (!strcmp(**file, "\n"))
+		if (!strcmp(**file, ""))
 		{
 			(*file)++;
 			continue ;
 		}
         split = ft_split(**file, ' ');
 		if (split[2])
-			return (0);
+			return (1);
 		if (identifier_check(split, scene))
-			return (0);
+			return (1);
 		(*file)++;
-		i++;
 		if (get_elements(scene))
 			break ;
     }
-	while ((**file) && !strcmp(**file, "\n"))
+	while ((**file) && !strcmp(**file, ""))
 		(*file)++;
 	return (0);
+}
+
+void	map_dimensions(t_scene *scene)
+{
+	int	i;
+	int	width;
+	int	len;
+
+	i = 0;
+	width = 0;
+	scene->map_h = strlen2(scene->map);
+	while ((scene->map)[i])
+	{
+		len = strlen((scene->map)[i]);
+		if(len > width)
+			width = len;
+		i++;
+	}
+	scene->map_w = width;
 }
 
 int	path_check(char *path)
@@ -227,6 +228,15 @@ int lines_count(char *path)
     return (count);
 }
 
+void	remove_newline(char **str)
+{
+	int	len;
+
+	len = ft_strlen(*str) - 1;
+	if ((*str)[len] == '\n')
+		(*str)[len] = '\0';
+}
+
 char	**read_file(int fd, char *path)
 {
 	char	**file;
@@ -236,9 +246,12 @@ char	**read_file(int fd, char *path)
 	i = 0;
 	count = lines_count(path);
 	file = malloc (sizeof(char *) * (count + 1));
-	file[i] = get_next_line(fd);
-	while (++i < count)
+	while (i < count)
+	{
 		file[i] = get_next_line(fd);
+		remove_newline(&(file[i]));
+		i++;
+	}
 	file[i] = NULL;
 	return (file);
 }
@@ -258,16 +271,7 @@ void	print_scene(t_scene *scene)
 		scene->east_tex, scene->floor, scene->ceiling);
 	while (scene->map[i])
 		printf("%s\n", scene->map[i++]);
-}
-
-void	scene_init(t_scene *scene)
-{
-	scene->north_tex = NULL;
-	scene->east_tex = NULL;
-	scene->west_tex = NULL;
-	scene->south_tex = NULL;
-	scene->floor = 0;
-	scene->ceiling = 0;
+	printf("width: %d\nheight: %d\n", scene->map_w, scene->map_h);
 }
 
 t_scene	*map_parse(char *path)
@@ -281,12 +285,12 @@ t_scene	*map_parse(char *path)
         return (NULL);
 	file = read_file(fd, path);
     scene = malloc(sizeof(t_scene));
-	scene_init(scene);
+	ft_memset(scene, 0, sizeof(t_scene));
 	if (elements_check(&file, scene))
 		return (NULL);
     if (map_check(file, scene))
-        return (NULL);
+    	return (NULL);
+	map_dimensions(scene);
 	print_scene(scene);
-	// ft_free(file);
     return (scene);
 }
