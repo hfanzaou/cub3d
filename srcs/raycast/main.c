@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/10 19:08:15 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/11 20:48:28 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ typedef struct s_mlx
   int     tile_size;
   int    *xpm;
   int     bpp;
+  void   *img;
+   int size_line;
+  int endian;
   t_scene *scene;
 }         t_mlx;
 
@@ -157,17 +160,20 @@ int ft_dir2(int dir, int f)
 }
 int check_collision(t_scene *map, int x, int y, int i)
 {
-  if (map->map[y / 50][x / 50] == '0')
-    return (0);
-  if (map->map[y / 50][(x - i) / 50] != '0')
-    return (1);
-  if (map->map[(y - i) / 50][x / 50] != '0')
-    return (1);
-  if (map->map[y / 50][(x + i) / 50] != '0')
-    return (1);
-  if (map->map[(y + i)/ 50][x / 50] != '0')
-    return (1);
-  return (0);        
+  // if (map->map[y / 50][x / 50] == '1')
+  //   return (1);
+  if (i == 1 && (map->map[(y + 1)/50][x/50] == '1'))
+      return (1);
+  else if (i == 0 && (map->map[y/50][(x + 1)/50] == '1'))    
+      return (1);
+  else if (i == 2)
+  {
+    if (map->map[y/50][(x - 1)/50] == '1' || map->map[y/50][(x + 1)/50] == '1')
+      return (1);
+    else if ((map->map[(y - 1)/50][x/50] == '1' || map->map[(y + 1)/50][x/50] == '1'))
+      return (1);  
+  }
+  return (0);              
 }
 t_cor *ft_hor(t_mlx *p, t_ray *ray, int f)
 {
@@ -184,28 +190,38 @@ t_cor *ft_hor(t_mlx *p, t_ray *ray, int f)
   else 
     intersec2(p, ray);  
   //printf("px = %f\npy = %f\nhx = %f\nhy = %f\ntx = %f\nty = %f\n", p->x, p->y, ray->hvx_inter, ray->hvy_inter, ray->dx, ray->dy);
-  if (ray->hvy_inter > p->scene->map_h * p->tile_size || ray->hvy_inter < 0 || ray->hvx_inter > p->scene->map_w * p->tile_size || ray->hvx_inter < 0)
+  printf("here\n");
+  if (ray->hvy_inter > p->scene->map_h * p->tile_size || ray->hvy_inter < 0 || ray->hvx_inter > ft_strlen(p->scene->map[(int)ray->hvy_inter / 50]) * p->tile_size || ray->hvx_inter < 0)
       {
         cor->x = ray->hvx_inter;
         cor->y = ray->hvy_inter;
       return (cor); 
       }   
-  while (p->scene->map[(int)ray->hvy_inter/p->tile_size][(int)ray->hvx_inter/p->tile_size] == '0' 
-  && !check_collision(p->scene, (int)ray->hvx_inter, (int)ray->hvy_inter, 1))
+  while (p->scene->map[(int)(ray->hvy_inter/50)][(int)(ray->hvx_inter/50)] == '0' 
+  && !check_collision(p->scene, (int)ray->hvx_inter, (int)ray->hvy_inter, f))
   {
     //put_dot(p, ray->hvx_inter, ray->hvy_inter);
     ray->hvy_inter += ray->dy;
     ray->hvx_inter += ray->dx;
-    if (ray->hvy_inter > p->scene->map_h * p->tile_size || ray->hvy_inter < 0 || ray->hvx_inter > p->scene->map_w * p->tile_size || ray->hvx_inter < 0)
+    printf("x = %F\ny = %f\n dx = %f\n dy = %f\n", ray->hvx_inter, ray->hvy_inter, ray->dx, ray->dy);
+    if (ray->hvy_inter > p->scene->map_h * p->tile_size 
+    || ray->hvy_inter < 0 || ray->hvx_inter > ft_strlen(p->scene->map[(int)ray->hvy_inter / 50]) * p->tile_size 
+    || ray->hvx_inter < 0)
     {
        cor->x = ray->hvx_inter;
       cor->y = ray->hvy_inter;
       return (cor);
     }
+    // if (p->scene->map[(int)ray->hvy_inter/p->tile_size][(int)ray->hvx_inter/p->tile_size] != '0')
+    // {
+    //   cor->x = ray->hvx_inter;
+    //   cor->y = ray->hvy_inter;
+    //   return (cor);
+    // }
   }
   //put_dot(p, ray->hvx_inter, ray->hvy_inter)
-    cor->x = ray->hvx_inter;
-    cor->y = ray->hvy_inter;
+  cor->x = ray->hvx_inter;
+  cor->y = ray->hvy_inter;
   // else
   // {
   //   cor->x = ray->hvx_inter + (p->x - ray->hvx_inter);
@@ -227,75 +243,46 @@ int raydir(float ray)
   return (0);        
 }
 
-void  castone(t_mlx *p, t_ray *ray)
+t_cor  *castone(t_mlx *p, t_ray *ray)
 {
   float x;
   float y;
-  //int hypotv = -1;
-  //float distance;
   t_cor *h;
   t_cor *v;
-  // float ay;
-  // float ax;
   int i;
   i = 0;
     x = p->x - cos(ray->ray) * i;
     y = p->y - sin(ray->ray) * i;
-  // else
-  // {
-  //   x = p->x + 6 - cos(ray->ray) * i;
-  //   y = p->x + 6 - sin(ray->ray) * i;
-  // }
-  while (p->scene->map[(int)y / p->tile_size][(int)x / p->tile_size] == '0')
+  while (p->scene->map[(int)y / p->tile_size][(int)x / p->tile_size] == '0' && !check_collision(p->scene, (int)x, (int)y, 1))
   {
     x = p->x - cos(ray->ray) * i;
     y = p->y - sin(ray->ray) * i;
    //mlx_pixel_put(p->mlx_p, p->mlx_win, x, y, 16711680);
-   mlx_pixel_put(p->mlx_p, p->mlx_win, x / 5, y / 5, 16711680);
+   //mlx_pixel_put(p->mlx_p, p->mlx_win, x / 5, y / 5, 16711680);
     i += 4;
   }
-  // if (p->scene->map[(int)p->x / 50][(int)p->y / 50] == '1')
-  // {  
-  //   p->x = p->x;
-  //   p->y = p->y;
-  // }
-  //distance = 0;
  ray = ft_norm(ray);
- //printf("ray = %f\n", ray->ray);
- //printf("ray = %f\n %f\n", ray->ray);
   ray->dir = raydir(ray->ray);
   h = ft_hor(p, ray, 1);
   h->dis = sqrt((p->x - h->x) * (p->x - h->x) +  (p->y - h->y) * (p->y - h->y));
   v = ft_hor(p, ray, 0);
   v->dis = sqrt((p->x - v->x) * (p->x - v->x) +  (p->y - v->y) * (p->y - v->y));
   if (!v || !h)
-    return ;
-  // printf("hypotv = %f\n", hypot(v->x, v->y));
-  // printf("hypoth = %f\n", hypot(h->x, h->y));  
-  // if (ray->dir == 1)  
-  //   hypotv = h->x >= v->x && h->y >= v->y;
-  // else if (ray->dir == 2)
-  //   hypotv = v->x >= h->x && h->y >= v->y;
-  // else if (ray->dir == 3)
-  //   hypotv = v->x >= h->x && v->y >= h->y;
-  // else if (ray->dir == 4)
-  //   hypotv =  v->x <= h->x && v->y >= h->y; 
-  // if (hypotv)
-  // {
-  //   distance = sqrt((p->x - h->x) * (p->x - h->x) +  (p->y - h->y) * (p->y - h->y));
-  //   //put_dot(p, h->x, h->y);
-  // }
-  // else
-  // {
-  //   distance = sqrt((p->x - v->x) * (p->x - v->x) +  (p->y - v->y) * (p->y - v->y));
-  //   //put_dot(p, v->x, v->y);
-  // }
+    return NULL;
   if (h->dis > v->dis)
+  {
     ray->distance = v->dis;
+    //put_dot(p, v->x, v->y);
+    return (v);
+  }
   else 
-    ray->distance = h->dis;   
+  {
+    ray->distance = h->dis; 
+    //put_dot(p, h->x, h->y);
+    return (h);  
+  }
 }
-int draw_wall(t_mlx *p, t_ray *ray)
+int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
 {
   float proj_plane;
   float wall_hight;
@@ -303,6 +290,7 @@ int draw_wall(t_mlx *p, t_ray *ray)
   int y;
   int i;
   int j;
+  (void)cor;
   //void *img;
   proj_plane = (1200 / 2) / tan(p->fov / 2);
   wall_hight = (p->tile_size / ray->distance) * proj_plane;
@@ -311,28 +299,27 @@ int draw_wall(t_mlx *p, t_ray *ray)
   y = (1200 / 2) - (wall_hight / 2);
   i = 0;
   //printf("gsdfg\n");
-  p->bpp = 1; 
- // p->xpm = (int *)mlx_get_data_addr(p->mlx_p, &p->bpp, (int *)1200, (int *)1200);
+  p->bpp = 1;
   j = 0;
   while (i < y)
   {
-    mlx_pixel_put(p->mlx_p, p->mlx_win, x * 4, i, 8308963);
-    // p->xpm[j + i] = (char *)8308963;
-    // j += 1200;
+   // mlx_pixel_put(p->mlx_p, p->mlx_win, x, i, 8308963);
+    p->xpm[j * 1200 + x] = 8308963;
+    j++;
     i++;
   }
   while (y < ((1200 / 2) + (wall_hight / 2)))
   {
-    mlx_pixel_put(p->mlx_p, p->mlx_win, x * 4, y, 16711680);
-    // p->xpm[j + y] = (char *)16711680;
-    // j += 1200;
+       //mlx_pixel_put(p->mlx_p, p->mlx_win, x , y, 16711680);
+    p->xpm[j * 1200 + x] = 16711680;
+    j++;
     y++;
   }
   while (y < 1200)
   {
-    mlx_pixel_put(p->mlx_p, p->mlx_win, x * 4, y, 8421504);
-    // p->xpm[j + y] = (char *)8421504;
-    // j += 1200;
+    //mlx_pixel_put(p->mlx_p, p->mlx_win, x, y, 8421504);
+    p->xpm[j * 1200 + x] = 8421504;
+    j++;
     y++;
   }
   // img = mlx_xpm_to_image(p->mlx_p, p->xpm, (int *)1200, (int *)1200);
@@ -342,22 +329,24 @@ int draw_wall(t_mlx *p, t_ray *ray)
 t_ray *ft_raycast(t_mlx *p)
 {
   float i;
-
+  t_cor *cor;
+  
   p->fov = 60 * (M_PI / 180);
   t_ray *ray;
   ray = malloc(sizeof(t_ray));
   i = 0;
   ray->ray = p->rot_angle - (p->fov / 2);
   ray->index = 0;
-  while (i < 1200 / 4)
+  while (i < 1200)
   {
-    castone(p, ray);
-    ray->ray += p->fov / (1200 / 4);
+    cor = castone(p, ray);
+    ray->ray += p->fov / (1200);
     ray->index = i;
-    draw_wall(p, ray);
+    draw_wall(p, ray, cor);
     //printf("ray = %f\n", ray->ray);
     i++;
   }
+  mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
   return (ray);
 }
 
@@ -414,8 +403,8 @@ void  redraw(t_mlx *p)
 t_mlx *p_init()
 {
     t_mlx *p;
- 
     p = malloc(sizeof(t_mlx));
+    
     p->x = 0;
     p->y = 0;
     p->walk_dir = 0;
@@ -500,15 +489,15 @@ int  step(void *ptr)
   x = p->x + cos(p->rot_angle) * (step) + cos(p->slide_angle) * slide;
   y = p->y + sin(p->rot_angle) * (step) + sin(p->slide_angle) * slide;
   printf("x = %f\ny = %f\n", x, y);
-  if (check_collision(p->scene, (int)x, (int)y, 1))
+  if (check_collision(p->scene, (int)x, (int)y, 2))
     return (0);
   p->x = x;
   p->y = y;
   mlx_clear_window(p->mlx_p, p->mlx_win);
   printf("here\n");
   redraw(p);
+  //draw_mini(p);
   ft_raycast(p);
-  draw_mini(p);
   return (0);
 }
 
@@ -572,19 +561,23 @@ int main(int ac, char **av)
 	void	*mlx_p;
 	void	*mlx_win;
   t_mlx *p;
+
+  mlx_p = mlx_init();
   if (ac != 2)
     return (0);
-	mlx_p = mlx_init();
 	if (!mlx_p)
 		return (ft_error2(1));
   p = p_init();  
   p->scene = map_parse(av[1]);
   if (!p->scene)
     return (1);
- // printf("%d\n%d\n", p->scene->map_w, p->scene->map_h);    
+    
+ printf("%d\n%d\n", p->scene->map_w, p->scene->map_h);    
 	mlx_win = mlx_new_window(mlx_p, 1200, 1200, "cub3d");
   p->mlx_p = mlx_p;
   p->mlx_win = mlx_win;
+  p->img = mlx_new_image(p->mlx_p, 1200, 1200);
+    p->xpm = (int *)mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
   if (!mlx_win)
 		return (ft_error2(1));
   redraw(p);
