@@ -6,7 +6,7 @@
 #    By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 04:48:24 by hfanzaou          #+#    #+#              #
-#    Updated: 2023/02/10 19:12:20 by hfanzaou         ###   ########.fr        #
+#    Updated: 2023/02/12 21:31:57 by hfanzaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,7 @@ clean :
 	rm -f $(OBJS)
 
 fclean : clean
+	make fclean -C srcs/raycast/libft
 	rm -f $(NAME)
 
 re : fclean all		
