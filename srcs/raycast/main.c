@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/12 21:29:53 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/13 20:52:22 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,10 +290,11 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   int y;
   int i;
   int j;
+  int r;
   (void)cor;
   
   proj_plane = (1200 / 2) / tan(p->fov / 2);
-  wall_hight = (p->tile_size / ray->distance) * proj_plane;
+  wall_hight = round((p->tile_size / ray->distance) * proj_plane);
   x = ray->index;
   i = 0;
   if (wall_hight >= 1200)
@@ -308,7 +309,7 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   if (x > 1200)
     return 0;
   //printf("index = %d\ndistance = %f\n", ray->index, ray->distance);
-  y = (1200 / 2) - (wall_hight / 2) - 1;
+  y = (1200 / 2) - (wall_hight / 2);
   if (y > 1200)
     return 0;
   i = 0;
@@ -316,7 +317,13 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   j = 0;
   while (i < y)
   {
-    p->xpm[j * 1200 + x] = 8308963;
+    p->xpm[j * 1200 + x] = 0x050A30;
+    if (i % 100 == 0)
+    {
+      r = rand()%(y * 1000);
+      if (r < y * 1200)
+      p->xpm[r] = 0xFFFFFF;
+    }
     //printf("j * 1200 + x = %d\n", j * 1200 + x);
     j++;
     i++;
@@ -367,7 +374,7 @@ t_ray *ft_raycast(t_mlx *p)
   while (i < 1199)
   {
     cor = castone(p, ray);
-    ray->ray += p->fov / (1200);
+    ray->ray += ((p->fov) / (1200));
     ray->index = i;
     draw_wall(p, ray, cor);
     //printf("ray = %f\n", ray->ray);
@@ -465,9 +472,9 @@ int draw_mini(t_mlx *p)
         x = (p->tile_size / 5) * i + p->tile_size / 10;
         y = (p->tile_size / 5) * j + p->tile_size / 10;
        //printf("p->x = %f\n", p->x);
-        fill(p, x, y, 16777215);
-        // mlx_put_image_to_window(p->mlx_p, p->mlx_win, img2, i * p->tile_size / 5, j * p->tile_size / 5);
-        // mlx_put_image_to_window(p->mlx_p, p->mlx_win, img3, x, y);
+        //fill(p, x, y, 16777215);
+        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img2, i * p->tile_size / 5, j * p->tile_size / 5);
+        mlx_put_image_to_window(p->mlx_p, p->mlx_win, img3, x, y);
         p->scene->map[j][i] = '0';
       } 
       i++;
@@ -513,8 +520,8 @@ int  step(void *ptr)
   //printf("here\n");
   redraw(p);
   ft_raycast(p);
-  draw_mini(p);
   mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
+  draw_mini(p);
   return (0);
 }
 
