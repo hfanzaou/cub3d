@@ -3,74 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/13 20:52:22 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/15 02:03:06 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-typedef struct s_mlx
-{
-  void    *mlx_p;
-  void    *mlx_win;
-  float   x;
-  float   y;
-  int     turn_dir;
-  int     walk_dir;
-  float   rot_angle;
-  int     slide_dir;
-  float   slide_angle;
-  float   walkspeed;
-  float   turnspeed;
-  float   fov;
-  int     tile_size;
-  int    *xpm;
-  int     bpp;
-  void   *img;
-   int size_line;
-  int endian;
-  t_scene *scene;
-}         t_mlx;
-
-typedef struct s_ray
-{
-  float ray;
-  float hvx_inter;
-  float hvy_inter;
-  float dx;
-  float dy;
-  int dir;
-  float distance;
-  int f;
-  int index;
-} t_ray;
-
-typedef struct s_cor
-{
-  int x;
-  int y;
-  float dis;
-}  t_cor;
-
-// int	ft_putstr_fd(char *str, int fd)
-// {
-// 	while (*str)
-// 	{
-// 		write(fd, str, 1);
-// 		str++;
-// 	}
-// 	return(1);
-// }
-
-int	ft_error2(int i)
-{
-	if (i == 1)
-		ft_putstr_fd("Error initializing mlx", 2);
-	return(1);	
-}
 
 t_ray *ft_norm(t_ray *ray)
 {
@@ -406,24 +346,24 @@ void  redraw(t_mlx *p)
   }
 }
 
-t_mlx *p_init()
+t_mlx *p_init(char *path)
 {
     t_mlx *p;
     p = malloc(sizeof(t_mlx));
-    
-    p->x = 0;
-    p->y = 0;
-    p->walk_dir = 0;
-    p->turn_dir = 0;
-    p->slide_dir = 0;
+	
+    ft_memset(p, 0, sizeof(t_mlx));
+	p->scene = map_parse(path);
+	if (!p->scene)
+		return (NULL);
     p->rot_angle = M_PI / 2;
-    p->turnspeed = 1 * (M_PI / 180);
-    p->walkspeed = 2;
+    p->turnspeed = 2 * (M_PI / 180);
+    p->walkspeed = 3;
     p->slide_angle = M_PI / 2;
     p->tile_size = 50;
     p->bpp = 1;
     return (p);
 }
+
 void fill(t_mlx *p, int x, int y, int color)
 {
   int i;
@@ -580,35 +520,27 @@ int ft_strlen2(char **map)
     i++;
   return (i) ; 
 }
+
 int main(int ac, char **av)
 {
-	void	*mlx_p;
-	void	*mlx_win;
-  t_mlx *p;
+  	t_mlx	*p;
 
-  mlx_p = mlx_init();
-  if (ac != 2)
-    return (0);
-	if (!mlx_p)
-		return (ft_error2(1));
-  p = p_init();  
-  p->scene = map_parse(av[1]);
-  if (!p->scene)
-    return (1);
-    
- //printf("%d\n%d\n", p->scene->map_w, p->scene->map_h);    
-	mlx_win = mlx_new_window(mlx_p, 1200, 1200, "cub3d");
-  p->mlx_p = mlx_p;
-  p->mlx_win = mlx_win;
-  p->img = mlx_new_image(p->mlx_p, 1200, 1200);
-    p->xpm = (int *)mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
-  if (!mlx_win)
-		return (ft_error2(1));
-  redraw(p);
-  //draw_mini(p);
-  mlx_hook(p->mlx_win, 2, 0, key_hook, p);
-  mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
-  mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);
-  mlx_loop_hook(p->mlx_p, step, (void *)p);
-	mlx_loop(mlx_p);
+  	if (ac != 2)
+  	  return (0);
+  	p = p_init(av[1]);
+  	if (!p)
+		return (1);
+  	p->mlx_p = mlx_init();
+	p->mlx_win = mlx_new_window(p->mlx_p, 1200, 1200, "cub3d");
+  	if (!(p->mlx_p) || !(p->mlx_win))
+		return (ft_error("Error initializing mlx\n"));
+  	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
+  	p->xpm = (int *)mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
+  	redraw(p);
+  	//draw_mini(p);
+  	mlx_hook(p->mlx_win, 2, 0, key_hook, p);
+  	mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
+  	mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);
+  	mlx_loop_hook(p->mlx_p, step, (void *)p);
+	mlx_loop(p->mlx_p);
 }

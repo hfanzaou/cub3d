@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/02 04:18:42 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/15 02:02:18 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,49 @@ typedef struct scene
     int     map_h;
 } t_scene;
 
+typedef struct s_mlx
+{
+  void    *mlx_p;
+  void    *mlx_win;
+  float   x;
+  float   y;
+  int     turn_dir;
+  int     walk_dir;
+  float   rot_angle;
+  int     slide_dir;
+  float   slide_angle;
+  float   walkspeed;
+  float   turnspeed;
+  float   fov;
+  int     tile_size;
+  int    *xpm;
+  int     bpp;
+  void   *img;
+   int size_line;
+  int endian;
+  t_scene *scene;
+}         t_mlx;
+
+typedef struct s_ray
+{
+  float ray;
+  float hvx_inter;
+  float hvy_inter;
+  float dx;
+  float dy;
+  int dir;
+  float distance;
+  int f;
+  int index;
+} t_ray;
+
+typedef struct s_cor
+{
+  int x;
+  int y;
+  float dis;
+}  t_cor;
+
 t_scene *map_parse(char *path);
+int		ft_error(char *err_msg);
+int		strlen2(char **ptr);
