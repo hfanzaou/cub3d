@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/15 02:03:06 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/15 09:56:10 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,11 +132,11 @@ t_cor *ft_hor(t_mlx *p, t_ray *ray, int f)
   //printf("px = %f\npy = %f\nhx = %f\nhy = %f\ntx = %f\nty = %f\n", p->x, p->y, ray->hvx_inter, ray->hvy_inter, ray->dx, ray->dy);
   //printf("here\n");
   if (ray->hvy_inter > p->scene->map_h * p->tile_size || ray->hvy_inter < 0 || ray->hvx_inter > ft_strlen(p->scene->map[(int)ray->hvy_inter / 50]) * p->tile_size || ray->hvx_inter < 0)
-      {
-        cor->x = ray->hvx_inter;
-        cor->y = ray->hvy_inter;
-      return (cor); 
-      }   
+  {
+    cor->x = ray->hvx_inter;
+    cor->y = ray->hvy_inter;
+    return (cor); 
+  }   
   while (p->scene->map[(int)(ray->hvy_inter/50)][(int)(ray->hvx_inter/50)] == '0' 
   && !check_collision(p->scene, (int)ray->hvx_inter, (int)ray->hvy_inter, f))
   {
@@ -212,12 +212,14 @@ t_cor  *castone(t_mlx *p, t_ray *ray)
   if (h->dis > v->dis)
   {
     ray->distance = v->dis;
+    v->f = 0;
     //put_dot(p, v->x, v->y);
     return (v);
   }
   else 
   {
     ray->distance = h->dis; 
+    h->f = 1;
     //put_dot(p, h->x, h->y);
     return (h);  
   }
@@ -232,9 +234,10 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   int j;
   int r;
   (void)cor;
-  
+  float pos;
   proj_plane = (1200 / 2) / tan(p->fov / 2);
-  wall_hight = round((p->tile_size / ray->distance) * proj_plane);
+  // ray->distance = round(ray->distance);
+  wall_hight = round(p->tile_size / (ray->distance * cos(ray->ray - p->rot_angle)) * proj_plane);
   x = ray->index;
   i = 0;
   if (wall_hight >= 1200)
@@ -255,6 +258,10 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   i = 0;
   //printf("gsdfg\n");
   j = 0;
+  if (cor->f == 0)
+    pos = cor->y - floor(cor->y / p->tile_size) * p->tile_size;
+  else
+    pos = cor->x - floor(cor->x / p->tile_size) * p->tile_size;
   while (i < y)
   {
     p->xpm[j * 1200 + x] = 0x050A30;
@@ -268,9 +275,13 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
     j++;
     i++;
   }
+  i = 0;
   while (y < ((1200 / 2) + (wall_hight / 2)))
   {
-    p->xpm[j * 1200 + x] = 16711680;
+    ((unsigned int *)p->xpm)[j * 1200 + x] = ((unsigned int *)p->imgs->data)[(i * p->imgs->size_line + (int)pos * (p->imgs->bpp / 8))];
+    // ft_putnbr_fd(i, 1);
+    // write(1, "\n", 1);
+    i++;
     j++;
     y++;
   }
@@ -524,7 +535,7 @@ int ft_strlen2(char **map)
 int main(int ac, char **av)
 {
   	t_mlx	*p;
-
+    
   	if (ac != 2)
   	  return (0);
   	p = p_init(av[1]);
@@ -536,6 +547,9 @@ int main(int ac, char **av)
 		return (ft_error("Error initializing mlx\n"));
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
   	p->xpm = (int *)mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
+    p->imgs = malloc(sizeof(t_imgs));
+    p->imgs->north = mlx_xpm_file_to_image(p->mlx_p, "walls.xpm", &p->imgs->w, &p->imgs->h);
+    p->imgs->data = mlx_get_data_addr(p->mlx_p, &p->imgs->bpp, &p->imgs->size_line, &p->imgs->endian);
   	redraw(p);
   	//draw_mini(p);
   	mlx_hook(p->mlx_win, 2, 0, key_hook, p);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/15 02:02:18 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/15 09:19:59 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,20 @@
 #include "mlx.h"
 #include "get_next_line/get_next_line.h"
 #include "libft/libft.h"
+
+typedef struct  s_imgs
+{
+  void  *north;
+  void  *west;
+  void  *east;
+  void  *south;
+  char *data;
+  int w;
+  int h;
+  int bpp;
+  int size_line;
+  int endian;
+} t_imgs;
 
 typedef struct scene
 {
@@ -53,6 +67,7 @@ typedef struct s_mlx
   void   *img;
    int size_line;
   int endian;
+  t_imgs *imgs;
   t_scene *scene;
 }         t_mlx;
 
@@ -74,6 +89,7 @@ typedef struct s_cor
   int x;
   int y;
   float dis;
+  int f;
 }  t_cor;
 
 t_scene *map_parse(char *path);

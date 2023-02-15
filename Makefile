@@ -6,7 +6,7 @@
 #    By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 04:48:24 by hfanzaou          #+#    #+#              #
-#    Updated: 2023/02/12 21:31:57 by hfanzaou         ###   ########.fr        #
+#    Updated: 2023/02/15 09:32:02 by hfanzaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRCS = srcs/raycast/main.c srcs/raycast/map_parse.c srcs/raycast/get_next_line/g
 
 SFLAGS = -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit -I /usr/locale/include 
 
-FLAGS = -Wall -Werror -Wextra -D BUFFER_SIZE=1 -fsanitize=address
+FLAGS = -Wall -Werror -Wextra -D BUFFER_SIZE=1 #-fsanitize=address
 
 CC = gcc
 
