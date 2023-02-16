@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/16 03:15:20 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/16 19:17:50 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void  intersec(t_mlx *p, t_ray *ray)
   if (inter_dir == -1)
   {
     ray->hvy_inter = floor((p->y) / p->tile_size) * p->tile_size - 1;
-    ray->hvx_inter = p->x + ((ray->hvy_inter - p->y)/tan(ray->ray));
+    ray->hvx_inter = p->x + ((ray->hvy_inter - p->y)/tan(ray->ray)) + 1;
     ray->dx = -((p->tile_size/tan(ray->ray)));
     ray->dy = -p->tile_size;
   }
@@ -59,7 +59,7 @@ void  intersec2(t_mlx *p, t_ray *ray)
   if (inter_dir == -1)
   {
     ray->hvx_inter = floor((p->x) / p->tile_size) * p->tile_size - 1;
-    ray->hvy_inter = p->y - ((p->x - ray->hvx_inter) * tan(ray->ray));
+    ray->hvy_inter = p->y - ((p->x - ray->hvx_inter) * tan(ray->ray)) + 0.5;
     ray->dy = -((p->tile_size * tan(ray->ray)));
     ray->dx = -p->tile_size;
   }
@@ -183,30 +183,47 @@ int raydir(float ray)
   return (0);        
 }
 
-t_cor  *castone(t_mlx *p, t_ray *ray)
+int draw_ray(t_mlx *p)
 {
   float x;
   float y;
+  int i;
+  int j;
+  float angle;
+  angle = p->rot_angle - p->fov / 2;
+  i = 0;
+    x = p->x - cos(angle) * i;
+    y = p->y - sin(angle) * i;
+  j = 0;
+  while (j < 1200)
+  {  
+    i = 0;
+    while (p->scene->map[(int)y / p->tile_size][(int)x / p->tile_size] == '0')
+    {
+     x = p->x - cos(angle) * i;
+    y = p->y - sin(angle) * i;
+    mlx_pixel_put(p->mlx_p, p->mlx_win, x/5, y/5, 16711680);
+   // ((unsigned int *)p->xpm)[(int)y/16 * p->size_line + (int)x/16 * (p->bpp/8)] = 16711680;
+    i++;
+    }
+    angle += (p->fov / 1200);
+    j++;
+  }
+  return (0);
+}
+t_cor  *castone(t_mlx *p, t_ray *ray)
+{
   t_cor *h;
   t_cor *v;
   int i;
   i = 0;
-    x = p->x - cos(ray->ray) * i;
-    y = p->y - sin(ray->ray) * i;
-  while (p->scene->map[(int)y / p->tile_size][(int)x / p->tile_size] == '0' && !check_collision(p->scene, (int)x, (int)y, 1))
-  {
-    x = p->x - cos(ray->ray) * i;
-    y = p->y - sin(ray->ray) * i;
-   //mlx_pixel_put(p->mlx_p, p->mlx_win, x, y, 16711680);
-   //mlx_pixel_put(p->mlx_p, p->mlx_win, x / 5, y / 5, 16711680);
-    i += 4;
-  }
+  //draw_ray(p, ray);
  ray = ft_norm(ray);
   ray->dir = raydir(ray->ray);
   h = ft_hor(p, ray, 1);
-  h->dis = sqrt((p->x - h->x) * (p->x - h->x) +  (p->y - h->y) * (p->y - h->y));
+  h->dis = sqrt((p->x - h->x) * (p->x - h->x) + (p->y - h->y) * (p->y - h->y));
   v = ft_hor(p, ray, 0);
-  v->dis = sqrt((p->x - v->x) * (p->x - v->x) +  (p->y - v->y) * (p->y - v->y));
+  v->dis = sqrt((p->x - v->x) * (p->x - v->x) + (p->y - v->y) * (p->y - v->y));
   if (!v || !h)
     return NULL;
   if (h->dis > v->dis)
@@ -241,7 +258,6 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   int hight;
   int y2;
   proj_plane = (1200 / 2) / tan(p->fov / 2);
-  // ray->distance = round(ray->distance);
   wall_hight = round(p->tile_size / (ray->distance * cos(ray->ray - p->rot_angle)) * proj_plane);
   x = ray->index;
   i = 0;
@@ -259,11 +275,9 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   }
   if (x > p->size_line)
     return 0;
-  //printf("index = %d\ndistance = %f\n", ray->index, ray->distance);
   if (y > 1200)
     return 0;
   i = 0;
-  //printf("gsdfg\n");
   j = 0;
   if (cor->f == 0)
     pos = cor->y - floor(cor->y / p->tile_size) * p->tile_size;
@@ -271,11 +285,6 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
     pos = cor->x - floor(cor->x / p->tile_size) * p->tile_size;
   x1 = wall_hight * pos / p->tile_size;
   x1 = (float)x1 / (float)wall_hight * p->imgs->w;
-  //printf("x1 = %d\npos = %f\n", x1, pos);
-  // printf("%f\n", pos);
-  //pos = wall_hight * pos / 50;
-  //  printf("%f\n", pos);
-  // printf("y == %d\nsize_line == %d\n", y, p->size_line);
   while (i < y)
   {
    ((unsigned int *)p->xpm)[j * 1200 + x] = 0x050A30;
@@ -285,27 +294,24 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
       if (r < y * 1200)
       ((unsigned int *)p->xpm)[r] = 0xFFFFFF;
     }
-    //printf("j * 1200 + x = %d\n", j * 1200 + x);
     j++;
     i++;
   }
   i = 0;
-// printf("%d\n%d\n", p->endian, p->size_line);
   while (j < ((1200/ 2) + (hight / 2)))
   {
     y1 = (j - y2) / wall_hight * p->imgs->h;
-    //printf("y1 = %d\nsize_line = %d\nbpp = %d\n", y1, p->imgs->size_line1, p->imgs->bpp1);
     color = p->imgs->data + (y1 * p->imgs->size_line1 + x1 * (p->imgs->bpp1/8));
     ((unsigned int *)p->xpm)[j * 1200 + x] = *(unsigned int *)color;
-    // ((unsigned int *)p->imgs->data)[i * 200 + (int)pos];
-    // ft_putnbr_fd(i, 1);
-    // write(1, "\n", 1);
     i++;
     j++;
   }
+  i = 0;
   while (j < 1200)
   {
-    ((unsigned int *)p->xpm)[j * 1200 + x] = 8421504;
+   
+    ((unsigned int *)p->xpm)[j * 1200 + x] = 0x6F7378;
+    i++;
     j++;
   }
   return (0);
@@ -345,10 +351,8 @@ t_ray *ft_raycast(t_mlx *p)
     ray->ray += ((p->fov) / (1200));
     ray->index = i;
     draw_wall(p, ray, cor);
-    //printf("ray = %f\n", ray->ray);
     i++;
   }
-  //draw_center(p);
   return (ray);
 }
 
@@ -439,8 +443,6 @@ int draw_mini(t_mlx *p)
       {
         x = (p->tile_size / 5) * i + p->tile_size / 10;
         y = (p->tile_size / 5) * j + p->tile_size / 10;
-       //printf("p->x = %f\n", p->x);
-        //fill(p, x, y, 16777215);
         mlx_put_image_to_window(p->mlx_p, p->mlx_win, img2, i * p->tile_size / 5, j * p->tile_size / 5);
         mlx_put_image_to_window(p->mlx_p, p->mlx_win, img3, x, y);
         p->scene->map[j][i] = '0';
@@ -481,7 +483,10 @@ int  step(void *ptr)
   y = p->y + sin(p->rot_angle) * (step) + sin(p->slide_angle) * slide;
   //printf("x = %f\ny = %f\n", x, y);
   if (check_collision(p->scene, (int)x, (int)y, 2))
+  {
+    p->rot_angle -= (p->turn_dir * p->turnspeed);
     return (0);
+  }
   p->x = x;
   p->y = y;
   mlx_clear_window(p->mlx_p, p->mlx_win);
@@ -490,6 +495,7 @@ int  step(void *ptr)
   ft_raycast(p);
   mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
   draw_mini(p);
+  draw_ray(p);
   return (0);
 }
 
