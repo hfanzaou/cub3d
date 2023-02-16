@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/08 19:35:37 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/16 05:41:41 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,49 @@ int first_nd_last(char  *line)
     return (0);
 }
 
-int mapline_check(char *line, int *player_pos)
+int	is_space(char c)
+{
+	if (c == ' ' || c == '\t' || c == 0)
+		return (1);
+	return (0);
+}
+
+int	is_closed(char *line, char *up_line, char *down_line, int ind)
+{
+	if (line[ind] != '0')
+		return (0);
+	else if (is_space(line[ind + 1]) || is_space(line[ind - 1])
+		|| is_space(up_line[ind]) || is_space(down_line[ind]))
+		return (ft_error("Map must be closed\n"));
+	return (0);
+}
+
+int	check_walls(char *line)
+{
+	int	line_len;
+	int	i;
+
+	if (!(*line))
+		return (0);
+	i = 0;
+	line_len = ft_strlen(line);
+	while (line[i] == ' ')
+		i++;
+	while (line[line_len - 1] == ' ')
+		line_len--;
+	if (line[i] != '1' || line[line_len - 1] != '1')
+		return (ft_error("Map must be surrounded by walls\n"));
+	return (0);
+}
+
+int mapline_check(char **file, char *line, int *player_pos)
 {
     int     i;
     int     component;
 
     i = 0;
+	if (check_walls(line))
+		return (1);
     while (line[i])
     {
         if (line[i] == ' ')
@@ -84,7 +121,7 @@ int mapline_check(char *line, int *player_pos)
             i++;
             continue ;
         }
-        if ((i == 0 || (!line[i + 1])) && line[i] != '1')
+		if (is_closed(*file, *(file - 1), *(file + 1), i))
 			return (1);
         component = check_component(line[i]);
         if (component == -1)
@@ -110,7 +147,7 @@ int map_check(char **file, t_scene *scene)
     {
 		if ((!i || !(file + 1)) && (first_nd_last(*file)))
 			return (1);
-		else if (mapline_check(*file, &player_pos))
+		else if (mapline_check(file, *file, &player_pos))
 			return (1);
         scene->map[i] = *file;
 		i++;
@@ -120,13 +157,24 @@ int map_check(char **file, t_scene *scene)
     return (0);
 }
 
+int	is_byte(int n)
+{
+	if (n <= 255 && n >= 0)
+		return (0);
+	return (1);
+}
+
 int rgb_int(char *line)
 {
     int		res;
 	char	**rgb;
 
-	rgb = ft_split(line, ',');
 	res = 0;
+	rgb = ft_split(line, ',');
+	if (strlen2(rgb) != 3)
+		return (ft_error("Invalid color format (R,G,B)\n"));
+	if (is_byte(ft_atoi(*rgb)) || is_byte(ft_atoi(rgb[1])) || is_byte(ft_atoi(rgb[2])))
+		return (ft_error("Colors must be in range [0,255]\n"));
 	res = (ft_atoi(*rgb) << 16 | ft_atoi(rgb[1]) << 8 | ft_atoi(rgb[2]));
 	ft_free(rgb);
 	return (res);
@@ -151,9 +199,17 @@ int	identifier_check(char **iden_path, t_scene *scene)
     else if (!strcmp(*iden_path, "WE"))
         scene->west_tex = iden_path[1];
     else if (!strcmp(*iden_path, "F"))
+	{
         scene->floor = rgb_int(iden_path[1]);
+		if (scene->floor == -1)
+			return (1);
+	}
     else if (!strcmp(*iden_path, "C"))
+	{
         scene->ceiling = rgb_int(iden_path[1]);
+		if (scene->ceiling == -1)
+			return (1);
+	}
     else
         return (1);
     return (0);
