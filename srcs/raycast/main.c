@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/16 19:17:50 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/16 22:00:56 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,9 +280,15 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   i = 0;
   j = 0;
   if (cor->f == 0)
+  {
+    p->imgs->data = mlx_get_data_addr(p->imgs->east, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1); 
     pos = cor->y - floor(cor->y / p->tile_size) * p->tile_size;
+  }
   else
+  {
+    p->imgs->data = mlx_get_data_addr(p->imgs->south, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1);
     pos = cor->x - floor(cor->x / p->tile_size) * p->tile_size;
+  }
   x1 = wall_hight * pos / p->tile_size;
   x1 = (float)x1 / (float)wall_hight * p->imgs->w;
   while (i < y)
@@ -388,8 +394,8 @@ t_mlx *p_init(char *path)
 	if (!p->scene)
 		return (NULL);
     p->rot_angle = M_PI / 2;
-    p->turnspeed = 2 * (M_PI / 180);
-    p->walkspeed = 3;
+    p->turnspeed = 5 * (M_PI / 180);
+    p->walkspeed = 7;
     p->slide_angle = M_PI / 2;
     p->tile_size = 50;
     p->bpp = 1;
@@ -495,7 +501,6 @@ int  step(void *ptr)
   ft_raycast(p);
   mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
   draw_mini(p);
-  draw_ray(p);
   return (0);
 }
 
@@ -571,9 +576,11 @@ int main(int ac, char **av)
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
   	p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
     p->imgs = malloc(sizeof(t_imgs));
-    p->imgs->north = mlx_xpm_file_to_image(p->mlx_p, "walls.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->size_line1 = 0;
-    p->imgs->data = mlx_get_data_addr(p->imgs->north, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1);
+    p->imgs->north = mlx_xpm_file_to_image(p->mlx_p, "wall2.xpm", &p->imgs->w, &p->imgs->h);
+    p->imgs->south = mlx_xpm_file_to_image(p->mlx_p, "wall1.xpm", &p->imgs->w, &p->imgs->h);
+    p->imgs->east = mlx_xpm_file_to_image(p->mlx_p, "wall3.xpm", &p->imgs->w, &p->imgs->h);
+    p->imgs->west = mlx_xpm_file_to_image(p->mlx_p, "wall4.xpm", &p->imgs->w, &p->imgs->h);
+    // p->imgs->data = mlx_get_data_addr(p->imgs->north, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1);
    // p->imgs->size_line1 = 397 * (p->imgs->bpp1 / 8);
     printf("size_line = %d\nw = %d\nh = %d\n", p->imgs->size_line1, p->imgs->w, p->imgs->h);
   	redraw(p);

@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/16 02:53:21 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/16 21:07:04 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@
 typedef struct  s_imgs
 {
   void  *north;
+  void  *south;
+  void  *east;
+  void  *west;
   char  *data;
   int bpp1;
   int size_line1;
