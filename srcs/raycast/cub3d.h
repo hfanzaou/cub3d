@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/15 09:19:59 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/16 02:53:21 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,12 @@
 typedef struct  s_imgs
 {
   void  *north;
-  void  *west;
-  void  *east;
-  void  *south;
-  char *data;
-  int w;
+  char  *data;
+  int bpp1;
+  int size_line1;
+  int endian1;
   int h;
-  int bpp;
-  int size_line;
-  int endian;
+  int w;
 } t_imgs;
 
 typedef struct scene
@@ -62,7 +59,7 @@ typedef struct s_mlx
   float   turnspeed;
   float   fov;
   int     tile_size;
-  int    *xpm;
+  char    *xpm;
   int     bpp;
   void   *img;
    int size_line;

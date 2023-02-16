@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/15 09:56:10 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/16 03:15:20 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,27 +232,34 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   int y;
   int i;
   int j;
+  int x1;
+  int y1;
+  char *color;
   int r;
   (void)cor;
   float pos;
+  int hight;
+  int y2;
   proj_plane = (1200 / 2) / tan(p->fov / 2);
   // ray->distance = round(ray->distance);
   wall_hight = round(p->tile_size / (ray->distance * cos(ray->ray - p->rot_angle)) * proj_plane);
   x = ray->index;
   i = 0;
+  hight = wall_hight;
   if (wall_hight >= 1200)
   {
-    while (i < 1200)
-    {
-      p->xpm[i * 1200 + x] = 16711680;
-      i++;
-    }
-    return 0;
+    hight = 1199;
+    y2 = (1200 / 2) - wall_hight / 2;
+    y = (1200 / 2) - 1199 / 2;
   }
-  if (x > 1200)
+  else
+  {
+    y = (1200 / 2) - (wall_hight / 2);
+    y2 = y;
+  }
+  if (x > p->size_line)
     return 0;
   //printf("index = %d\ndistance = %f\n", ray->index, ray->distance);
-  y = (1200 / 2) - (wall_hight / 2);
   if (y > 1200)
     return 0;
   i = 0;
@@ -262,34 +269,44 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
     pos = cor->y - floor(cor->y / p->tile_size) * p->tile_size;
   else
     pos = cor->x - floor(cor->x / p->tile_size) * p->tile_size;
+  x1 = wall_hight * pos / p->tile_size;
+  x1 = (float)x1 / (float)wall_hight * p->imgs->w;
+  //printf("x1 = %d\npos = %f\n", x1, pos);
+  // printf("%f\n", pos);
+  //pos = wall_hight * pos / 50;
+  //  printf("%f\n", pos);
+  // printf("y == %d\nsize_line == %d\n", y, p->size_line);
   while (i < y)
   {
-    p->xpm[j * 1200 + x] = 0x050A30;
+   ((unsigned int *)p->xpm)[j * 1200 + x] = 0x050A30;
     if (i % 100 == 0)
     {
-      r = rand()%(y * 1000);
+      r = rand()%(y * 1200);
       if (r < y * 1200)
-      p->xpm[r] = 0xFFFFFF;
+      ((unsigned int *)p->xpm)[r] = 0xFFFFFF;
     }
     //printf("j * 1200 + x = %d\n", j * 1200 + x);
     j++;
     i++;
   }
   i = 0;
-  while (y < ((1200 / 2) + (wall_hight / 2)))
+// printf("%d\n%d\n", p->endian, p->size_line);
+  while (j < ((1200/ 2) + (hight / 2)))
   {
-    ((unsigned int *)p->xpm)[j * 1200 + x] = ((unsigned int *)p->imgs->data)[(i * p->imgs->size_line + (int)pos * (p->imgs->bpp / 8))];
+    y1 = (j - y2) / wall_hight * p->imgs->h;
+    //printf("y1 = %d\nsize_line = %d\nbpp = %d\n", y1, p->imgs->size_line1, p->imgs->bpp1);
+    color = p->imgs->data + (y1 * p->imgs->size_line1 + x1 * (p->imgs->bpp1/8));
+    ((unsigned int *)p->xpm)[j * 1200 + x] = *(unsigned int *)color;
+    // ((unsigned int *)p->imgs->data)[i * 200 + (int)pos];
     // ft_putnbr_fd(i, 1);
     // write(1, "\n", 1);
     i++;
     j++;
-    y++;
   }
-  while (y < 1200)
+  while (j < 1200)
   {
-    p->xpm[j * 1200 + x] = 8421504;
+    ((unsigned int *)p->xpm)[j * 1200 + x] = 8421504;
     j++;
-    y++;
   }
   return (0);
 }
@@ -305,7 +322,7 @@ void  draw_center(t_mlx *p)
     i = 595;
     while (j < 1200 * 650 + 605)
     {
-      p->xpm[j] = 8421504;
+     ((unsigned int *)p->xpm)[j] = 8421504;
       j++;
     }
     i++;
@@ -322,7 +339,7 @@ t_ray *ft_raycast(t_mlx *p)
   i = 0;
   ray->ray = p->rot_angle - (p->fov / 2);
   ray->index = 0;
-  while (i < 1199)
+  while (i < 1200)
   {
     cor = castone(p, ray);
     ray->ray += ((p->fov) / (1200));
@@ -546,10 +563,13 @@ int main(int ac, char **av)
   	if (!(p->mlx_p) || !(p->mlx_win))
 		return (ft_error("Error initializing mlx\n"));
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
-  	p->xpm = (int *)mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
+  	p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
     p->imgs = malloc(sizeof(t_imgs));
     p->imgs->north = mlx_xpm_file_to_image(p->mlx_p, "walls.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->data = mlx_get_data_addr(p->mlx_p, &p->imgs->bpp, &p->imgs->size_line, &p->imgs->endian);
+    p->imgs->size_line1 = 0;
+    p->imgs->data = mlx_get_data_addr(p->imgs->north, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1);
+   // p->imgs->size_line1 = 397 * (p->imgs->bpp1 / 8);
+    printf("size_line = %d\nw = %d\nh = %d\n", p->imgs->size_line1, p->imgs->w, p->imgs->h);
   	redraw(p);
   	//draw_mini(p);
   	mlx_hook(p->mlx_win, 2, 0, key_hook, p);
