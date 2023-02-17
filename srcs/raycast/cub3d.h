@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/16 21:07:04 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 03:42:32 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,14 @@
 #include "mlx.h"
 #include "get_next_line/get_next_line.h"
 #include "libft/libft.h"
+
+typedef struct s_imgset
+{
+  void *img1;
+  void *img2;
+  void *img3;
+  void *img4;
+} t_imgset;
 
 typedef struct  s_imgs
 {
@@ -68,6 +76,7 @@ typedef struct s_mlx
    int size_line;
   int endian;
   t_imgs *imgs;
+  t_imgset *imgset;
   t_scene *scene;
 }         t_mlx;
 
@@ -86,8 +95,8 @@ typedef struct s_ray
 
 typedef struct s_cor
 {
-  int x;
-  int y;
+  float x;
+  float y;
   float dis;
   int f;
 }  t_cor;
