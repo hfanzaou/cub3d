@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/17 19:19:24 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 22:01:16 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,15 +205,15 @@ t_cor  *castone(t_mlx *p, t_ray *ray)
     return (h);  
   }
 }
-int get_color(t_imgs *img, int x, int y)
+int get_color(t_tex *img, int x, int y)
 {
   char *color;
   //printf("x = %d\ny = %d\nw = %d\nh = %d\n", x, y, img->w, img->h);
-  if (x >= img->w)
-   x = img->w - 1;
-  if (y >= img->h)
-  y = img->w - 1; 
-  color = &img->data[y * img->size_line1 + x * (img->bpp1/8)];
+  if (x >= img->width)
+   x = img->width - 1;
+  if (y >= img->hight)
+    y = img->hight - 1; 
+  color = &img->data[y * img->size_line + x * (img->bpp/8)];
   return (*(unsigned int *)color);
 }
 int draw_ceil_floor(t_mlx *p, int x)
@@ -223,14 +223,14 @@ int draw_ceil_floor(t_mlx *p, int x)
   while (i < 1200)
   {
     if (i < 1200 / 2)
-      ((unsigned int *)p->xpm)[i * 1200 + x] = p->scene->ceiling;;
+      ((unsigned int *)p->xpm)[i * 1200 + x] = p->scene->ceiling;
     else 
        ((unsigned int *)p->xpm)[i * 1200 + x] = p->scene->floor;
     i++;   
   }
   return (0);
 }
-int get_x(t_mlx *p, t_cor *cor, float wall_hight)
+int get_x(t_mlx *p, t_cor *cor, float wall_hight, t_ray *ray)
 {
   int x;
   float pos;
@@ -241,6 +241,8 @@ int get_x(t_mlx *p, t_cor *cor, float wall_hight)
   else
     pos = cor->x - floor(cor->x / p->tile_size) * p->tile_size;
   tex_id = get_texture(cor, ray);
+   if (tex_id == -1)
+    return (-1);
   x = wall_hight * pos / p->tile_size;
   x = x / wall_hight * p->textures[tex_id].width;
   return (x);
@@ -272,6 +274,8 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
     y2 = win_cor.y;
   }
   tex_cor.x = get_x(p, cor, wall_hight, ray);
+  if (tex_cor.x == -1)
+    return (0);
   draw_ceil_floor(p, win_cor.x);
   tex_id = get_texture(cor, ray);
   while (win_cor.y < ((1200/ 2) + (hight / 2)))
@@ -345,6 +349,17 @@ void  redraw(t_mlx *p)
   }
 }
 
+// float put_dir(t_mlx *p)
+// {
+//   if (p->scene->p_dir == 'N')
+//     return (M_PI / 2);
+//   else if (p->scene->p_dir == 'S')
+//     return (M_PI * 3 / 2);
+//   else if (p->scene->p_dir == 'W')
+//     return (0);
+//   else if (p->scene->p_dir == 'E')
+//     return (M_PI);    
+// }
 t_mlx *p_init(char *path)
 {
     t_mlx *p;
@@ -354,7 +369,7 @@ t_mlx *p_init(char *path)
 	p->scene = map_parse(path);
 	if (!p->scene)
 		return (NULL);
-    p->rot_angle = M_PI / 2;
+    p->rot_angle = 0;
     p->turnspeed = 5 * (M_PI / 180);
     p->walkspeed = 7;
     p->slide_angle = M_PI / 2;
@@ -434,9 +449,6 @@ int draw_mini(t_mlx *p)
     j++;
   }
   fill_player(p, p->x, p->y, 0xFF0000);
-  // mlx_destroy_image(p->mlx_p, img1);
-  // mlx_destroy_image(p->mlx_p, img2);
-  // mlx_destroy_image(p->mlx_p, img3);
   return (0);
 }
 int  step(void *ptr)
@@ -555,8 +567,7 @@ int ft_strlen2(char **map)
 int main(int ac, char **av)
 {
   	t_mlx	*p;
-    int h;
-    int w;
+
   	if (ac != 2)
   	  return (0);
   	p = p_init(av[1]);
@@ -568,6 +579,7 @@ int main(int ac, char **av)
 		return (ft_error("Error initializing mlx\n"));
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
   	p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
+    textures_init(p);
   	step2(p);
   	mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   	mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
