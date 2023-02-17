@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/16 05:41:41 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/17 06:10:26 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,8 +227,8 @@ int elements_check(char ***file, t_scene *scene)
 			continue ;
 		}
         split = ft_split(**file, ' ');
-		if (split[2])
-			return (1);
+		if (strlen2(split) != 2)
+			return (ft_error(NULL));
 		if (identifier_check(split, scene))
 			return (1);
 		(*file)++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/17 06:14:18 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 06:33:05 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,15 +205,15 @@ t_cor  *castone(t_mlx *p, t_ray *ray)
     return (h);  
   }
 }
-int get_color(t_imgs *img, int x, int y)
+int get_color(t_tex *img, int x, int y)
 {
   char *color;
   //printf("x = %d\ny = %d\nw = %d\nh = %d\n", x, y, img->w, img->h);
-  if (x >= img->w)
-   x = img->w - 1;
-  if (y >= img->h)
-  y = img->w - 1; 
-  color = &img->data[y * img->size_line1 + x * (img->bpp1/8)];
+  if (x >= img->width)
+   x = img->width - 1;
+  if (y >= img->hight)
+  y = img->hight - 1; 
+  color = &img->data[y * img->size_line + x * (img->bpp/8)];
   return (*(unsigned int *)color);
 }
 int draw_ceil_floor(t_mlx *p, int x)
@@ -223,29 +223,26 @@ int draw_ceil_floor(t_mlx *p, int x)
   while (i < 1200)
   {
     if (i < 1200 / 2)
-      ((unsigned int *)p->xpm)[i * 1200 + x] = 0x050A30;
+      ((unsigned int *)p->xpm)[i * 1200 + x] = p->scene->ceiling;
     else 
-       ((unsigned int *)p->xpm)[i * 1200 + x] = 0x6F7378;
+       ((unsigned int *)p->xpm)[i * 1200 + x] = p->scene->floor;
     i++;   
   }
   return (0);
 }
-int get_x(t_mlx *p, t_cor *cor, float wall_hight)
+int get_x(t_mlx *p, t_cor *cor, float wall_hight, t_ray *ray)
 {
   int x;
   float pos;
+  int   tex_id;
+
   if (cor->f == 0)
-  {
-    p->imgs->data = mlx_get_data_addr(p->imgs->west, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1); 
     pos = cor->y - floor(cor->y / p->tile_size) * p->tile_size;
-  }
   else
-  {
-    p->imgs->data = mlx_get_data_addr(p->imgs->south, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1);
     pos = cor->x - floor(cor->x / p->tile_size) * p->tile_size;
-  }
+  tex_id = get_texture(cor, ray);
   x = wall_hight * pos / p->tile_size;
-  x = x / wall_hight * p->imgs->w;
+  x = x / wall_hight * p->textures[tex_id].width;
   return (x);
 }
 int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
@@ -256,6 +253,8 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   t_cor tex_cor;
   float hight;
   int y2;
+  int tex_id;
+
   proj_plane = (1200 / 2) / tan(p->fov / 2);
   wall_hight = p->tile_size / (ray->distance * cos(ray->ray - p->rot_angle)) * proj_plane;
   win_cor.x = ray->index;
@@ -272,12 +271,13 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
     win_cor.y = (1200 / 2) - (wall_hight / 2);
     y2 = win_cor.y;
   }
-  tex_cor.x = get_x(p, cor, wall_hight);
+  tex_cor.x = get_x(p, cor, wall_hight, ray);
   draw_ceil_floor(p, win_cor.x);
+  tex_id = get_texture(cor, ray);
   while (win_cor.y < ((1200/ 2) + (hight / 2)))
   {
-    tex_cor.y = (win_cor.y - y2) / wall_hight * p->imgs->h;
-    ((unsigned int *)p->xpm)[(int)win_cor.y * 1200 + (int)win_cor.x] = get_color(p->imgs, floor(tex_cor.x), floor(tex_cor.y));
+    tex_cor.y = (win_cor.y - y2) / wall_hight * p->textures[tex_id].hight;
+    ((unsigned int *)p->xpm)[(int)win_cor.y * 1200 + (int)win_cor.x] = get_color(&(p->textures[tex_id]), floor(tex_cor.x), floor(tex_cor.y));
     win_cor.y++;
   }
   return (0);
@@ -557,8 +557,7 @@ int ft_strlen2(char **map)
 int main(int ac, char **av)
 {
   	t_mlx	*p;
-    int h;
-    int w;
+
   	if (ac != 2)
   	  return (0);
   	p = p_init(av[1]);
@@ -570,15 +569,7 @@ int main(int ac, char **av)
 		return (ft_error("Error initializing mlx\n"));
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
   	p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
-    p->imgs = malloc(sizeof(t_imgs));
-    p->imgs->north = mlx_xpm_file_to_image(p->mlx_p, "wall2.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->south = mlx_xpm_file_to_image(p->mlx_p, "wall1.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->east = mlx_xpm_file_to_image(p->mlx_p, "wall3.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->west = mlx_xpm_file_to_image(p->mlx_p, "wall4.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgset = malloc(sizeof(t_imgset)); 
-    p->imgset->img1 = mlx_xpm_file_to_image(p->mlx_p, "ground.xpm", &w, &h);
-    p->imgset->img2 = mlx_xpm_file_to_image(p->mlx_p, "wall.xpm", &w, &h);
-    p->imgset->img3 = mlx_xpm_file_to_image(p->mlx_p, "p.xpm", &w, &h);
+    textures_init(p);
   	step2(p);
   	mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   	mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
