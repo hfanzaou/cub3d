@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/17 23:10:28 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 23:53:07 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,36 +349,6 @@ void  redraw(t_mlx *p)
   }
 }
 
-float put_dir(t_mlx *p)
-{
-  if (p->scene->player_dir == 'N')
-    return (M_PI / 2);
-  if (p->scene->player_dir == 'S')
-    return (M_PI * 3 / 2);
-  if (p->scene->player_dir == 'W')
-    return (0);
-  if (p->scene->player_dir == 'E')
-    return (M_PI);
-  return (-1);      
-}
-
-t_mlx *p_init(char *path)
-{
-    t_mlx *p;
-    p = malloc(sizeof(t_mlx));
-	
-    ft_memset(p, 0, sizeof(t_mlx));
-	p->scene = map_parse(path);
-	if (!p->scene)
-		return (NULL);
-    p->rot_angle = put_dir(p);
-    p->turnspeed = 5 * (M_PI / 180);
-    p->walkspeed = 7;
-    p->slide_angle = M_PI / 2;
-    p->tile_size = 50;
-    p->bpp = 1;
-    return (p);
-}
 
 void fill_square(t_mlx *p, int x, int y, int color)
 {
@@ -485,87 +455,6 @@ int  step(void *ptr)
   mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
   return (0);
 }
-int step2(t_mlx *p)
-{
-   float step;
-  float x;
-  float y;
-  float slide;
-    step = (p->walk_dir * p->walkspeed);
-  slide = (p->slide_dir * p->walkspeed);
-  p->rot_angle += (p->turn_dir * p->turnspeed);
-  p->slide_angle = p->rot_angle - (M_PI / 2);
-  x = p->x + cos(p->rot_angle) * (step) + cos(p->slide_angle) * slide;
-  y = p->y + sin(p->rot_angle) * (step) + sin(p->slide_angle) * slide;
-  if (check_collision(p->scene, (int)x, (int)y, 2))
-  {
-    p->rot_angle -= (p->turn_dir * p->turnspeed);
-    return (0);
-  }
-  p->x = x;
-  p->y = y;
-  mlx_clear_window(p->mlx_p, p->mlx_win);
-  redraw(p);
-  ft_raycast(p);
-  mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
-  draw_mini(p);
-  return (0);
-}
-int key_hook(int key, t_mlx *p)
-{
-  if ((key == 126 || key == 13))
-    p->walk_dir = -1;
-  if (key == 125 || key == 1)
-    p->walk_dir = 1;
-  if (key == 123)
-    p->turn_dir = -1;
-  if (key == 124)
-    p->turn_dir = 1;
-  if (key == 2)
-    p->slide_dir = 1;
-  if (key == 0)
-    p->slide_dir = -1;    
-  return (0); 
-}
-
-int   key_hook2(int key, t_mlx *p)
-{
-   if (key == 126 || key == 13)
-    p->walk_dir = 0;
- if (key == 125 || key == 1)
-    p->walk_dir = 0;  
- if (key == 123)
-    p->turn_dir = 0;
-  if (key == 124)
-    p->turn_dir = 0;
-  if (key == 2)
-    p->slide_dir = 0;
-  if (key == 0)
-    p->slide_dir = 0; 
-  return (0);
-}
-
-int mouse_hook(int x, int y, t_mlx *p)
-{
-  (void)y;
-  if (x > 1200 / 2 + 400)
-    p->turn_dir = 1;
-  else if (x < 1200 / 2 - 400)
-    p->turn_dir = -1;
-  else
-    p->turn_dir = 0;   
-  return (0);    
-}
-
-int ft_strlen2(char **map)
-{
-  int i;
-
-  i = 0;
-  while (map[i])
-    i++;
-  return (i) ; 
-}
 
 int main(int ac, char **av)
 {
@@ -583,7 +472,7 @@ int main(int ac, char **av)
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
   	p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
     textures_init(p);
-  	step2(p);
+  	step_init(p);
   	mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   	mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
   	mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);

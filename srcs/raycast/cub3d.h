@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/17 23:07:06 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/17 23:31:35 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,3 +103,25 @@ int		ft_error(char *err_msg);
 int		strlen2(char **ptr);
 int get_texture(t_cor *inter, t_ray *ray);
 int textures_init(t_mlx *p);
+
+
+
+//===================HOOKS==================//
+int key_hook(int key, t_mlx *p);
+int key_hook2(int key, t_mlx *p);
+int mouse_hook(int x, int y, t_mlx *p);
+
+
+//===============INITIALIZE==================//
+
+t_mlx *p_init(char *path);
+int step_init(t_mlx *p);
+
+
+//============drawing========//
+void  redraw(t_mlx *p);
+int  draw_mini(t_mlx *p);
+
+
+int   check_collision(t_scene *map, int x, int y, int i);
+t_ray *ft_raycast(t_mlx *p);
