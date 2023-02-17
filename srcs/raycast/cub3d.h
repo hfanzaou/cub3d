@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/17 03:42:32 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 19:20:54 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,24 @@
 #include "get_next_line/get_next_line.h"
 #include "libft/libft.h"
 
-typedef struct s_imgset
+enum tex_id
 {
-  void *img1;
-  void *img2;
-  void *img3;
-  void *img4;
-} t_imgset;
+  north,
+  south,
+  east,
+  west,
+};
 
-typedef struct  s_imgs
+typedef struct  s_tex
 {
-  void  *north;
-  void  *south;
-  void  *east;
-  void  *west;
+  void  *tex_p;
   char  *data;
-  int bpp1;
-  int size_line1;
-  int endian1;
-  int h;
-  int w;
-} t_imgs;
+  int   bpp;
+  int   size_line;
+  int   endian;
+  int   hight;
+  int   width;
+} t_tex;
 
 typedef struct scene
 {
@@ -75,8 +72,7 @@ typedef struct s_mlx
   void   *img;
    int size_line;
   int endian;
-  t_imgs *imgs;
-  t_imgset *imgset;
+  t_tex *textures;
   t_scene *scene;
 }         t_mlx;
 
@@ -104,3 +100,5 @@ typedef struct s_cor
 t_scene *map_parse(char *path);
 int		ft_error(char *err_msg);
 int		strlen2(char **ptr);
+int get_texture(t_cor *inter, t_ray *ray);
+int textures_init(t_mlx *p);
