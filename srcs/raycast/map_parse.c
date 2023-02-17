@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/17 06:10:26 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/17 22:59:02 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,22 +39,26 @@ int	strlen2(char **ptr)
 	return (i);
 }
 
-int check_component(int c)
+int check_component(int c, int *player_pos)
 {
-    int     i;
     char    *valid_chars;
+	char	*search;
 
-    i = 0;
     valid_chars = "01NSEW";
-	if (c == '\n')
-		return (0);
-    while (valid_chars[i])
-    {
-        if (valid_chars[i] == c)
-            return (i);
-        i++;
-    }
-    return (-1);
+	search = ft_strchr(valid_chars, c);
+    if (search)
+	{
+		if (ft_strlen(search) > 4)
+			return (0);
+		else if (*player_pos == 0)
+		{
+			*player_pos = 1;
+			return (c);
+		}
+		else
+			return (ft_error("Multiple player starting position\n"));
+	}
+    return (ft_error("Invalid map component\n"));
 }
 
 int first_nd_last(char  *line)
@@ -106,12 +110,14 @@ int	check_walls(char *line)
 	return (0);
 }
 
-int mapline_check(char **file, char *line, int *player_pos)
+int mapline_check(char **file, t_scene *scene, int *player_pos)
 {
+	char	*line;
+    char	c;
     int     i;
-    int     component;
 
     i = 0;
+	line = *file;
 	if (check_walls(line))
 		return (1);
     while (line[i])
@@ -121,15 +127,13 @@ int mapline_check(char **file, char *line, int *player_pos)
             i++;
             continue ;
         }
-		if (is_closed(*file, *(file - 1), *(file + 1), i))
+		if (is_closed(line, *(file - 1), *(file + 1), i))
 			return (1);
-        component = check_component(line[i]);
-        if (component == -1)
-            return (ft_error("invalid map component\n"));
-        else if (component > 1 && (*player_pos == 0))
-            *player_pos = component;
-		else if (component > 1 && (*player_pos))
-			return (ft_error("player start position\n"));
+        c = check_component(line[i], player_pos);
+        if (c == -1)
+            return (1);
+		else if (c)
+			scene->player_dir = c;
         i++;
     }
     return (0);
@@ -147,7 +151,7 @@ int map_check(char **file, t_scene *scene)
     {
 		if ((!i || !(file + 1)) && (first_nd_last(*file)))
 			return (1);
-		else if (mapline_check(file, *file, &player_pos))
+		else if (mapline_check(file, scene, &player_pos))
 			return (1);
         scene->map[i] = *file;
 		i++;
@@ -327,7 +331,7 @@ void	print_scene(t_scene *scene)
 		scene->east_tex, scene->floor, scene->ceiling);
 	while (scene->map[i])
 		printf("%s\n", scene->map[i++]);
-	printf("width: %d\nheight: %d\n", scene->map_w, scene->map_h);
+	printf("width: %d\nheight: %d\nplayer_dir %c\n", scene->map_w, scene->map_h, scene->player_dir);
 }
 
 t_scene	*map_parse(char *path)
