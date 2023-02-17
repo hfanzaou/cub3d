@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/17 06:14:18 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 19:19:24 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,9 +223,9 @@ int draw_ceil_floor(t_mlx *p, int x)
   while (i < 1200)
   {
     if (i < 1200 / 2)
-      ((unsigned int *)p->xpm)[i * 1200 + x] = 0x050A30;
+      ((unsigned int *)p->xpm)[i * 1200 + x] = p->scene->ceiling;;
     else 
-       ((unsigned int *)p->xpm)[i * 1200 + x] = 0x6F7378;
+       ((unsigned int *)p->xpm)[i * 1200 + x] = p->scene->floor;
     i++;   
   }
   return (0);
@@ -234,18 +234,15 @@ int get_x(t_mlx *p, t_cor *cor, float wall_hight)
 {
   int x;
   float pos;
+  int   tex_id;
+
   if (cor->f == 0)
-  {
-    p->imgs->data = mlx_get_data_addr(p->imgs->west, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1); 
     pos = cor->y - floor(cor->y / p->tile_size) * p->tile_size;
-  }
   else
-  {
-    p->imgs->data = mlx_get_data_addr(p->imgs->south, &p->imgs->bpp1, &p->imgs->size_line1, &p->imgs->endian1);
     pos = cor->x - floor(cor->x / p->tile_size) * p->tile_size;
-  }
+  tex_id = get_texture(cor, ray);
   x = wall_hight * pos / p->tile_size;
-  x = x / wall_hight * p->imgs->w;
+  x = x / wall_hight * p->textures[tex_id].width;
   return (x);
 }
 int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
@@ -256,6 +253,8 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
   t_cor tex_cor;
   float hight;
   int y2;
+  int tex_id;
+
   proj_plane = (1200 / 2) / tan(p->fov / 2);
   wall_hight = p->tile_size / (ray->distance * cos(ray->ray - p->rot_angle)) * proj_plane;
   win_cor.x = ray->index;
@@ -272,12 +271,13 @@ int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor)
     win_cor.y = (1200 / 2) - (wall_hight / 2);
     y2 = win_cor.y;
   }
-  tex_cor.x = get_x(p, cor, wall_hight);
+  tex_cor.x = get_x(p, cor, wall_hight, ray);
   draw_ceil_floor(p, win_cor.x);
+  tex_id = get_texture(cor, ray);
   while (win_cor.y < ((1200/ 2) + (hight / 2)))
   {
-    tex_cor.y = (win_cor.y - y2) / wall_hight * p->imgs->h;
-    ((unsigned int *)p->xpm)[(int)win_cor.y * 1200 + (int)win_cor.x] = get_color(p->imgs, floor(tex_cor.x), floor(tex_cor.y));
+    tex_cor.y = (win_cor.y - y2) / wall_hight * p->textures[tex_id].hight;
+    ((unsigned int *)p->xpm)[(int)win_cor.y * 1200 + (int)win_cor.x] = get_color(&(p->textures[tex_id]), floor(tex_cor.x), floor(tex_cor.y));
     win_cor.y++;
   }
   return (0);
@@ -316,8 +316,8 @@ t_ray *ft_raycast(t_mlx *p)
     cor = castone(p, ray);
     ray->ray += ((p->fov) / (1200));
     ray->index = i;
-    draw_wall(p, ray, cor);
     //draw_ray(p, ray->ray);
+    draw_wall(p, ray, cor);
     i++;
   }
   return (ray);
@@ -382,6 +382,7 @@ void fill_square(t_mlx *p, int x, int y, int color)
     i += 2;
   }
 }
+
 void  fill_player(t_mlx *p, int x, int y, int color)
 {
   int i;
@@ -400,6 +401,7 @@ void  fill_player(t_mlx *p, int x, int y, int color)
     i++;
   }
 }
+
 int draw_mini(t_mlx *p)
 {
   char **map;
@@ -417,18 +419,14 @@ int draw_mini(t_mlx *p)
     {
       if (p->scene->map[j][i] == '1')
         fill_square(p, i * p->tile_size, j * p->tile_size, 0xFFFFFF);
-        // mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->imgset->img1, i * p->tile_size / 5, j * p->tile_size / 5);
       else if (p->scene->map[j][i] == '0')
         fill_square(p, i * p->tile_size, j * p->tile_size, 0x808080);
-        // mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->imgset->img2, i * p->tile_size / 5, j * p->tile_size / 5);
       if (ft_strchr("NSEW", p->scene->map[j][i]))
       {
         x = (p->tile_size / 5) * i + p->tile_size / 10;
         y = (p->tile_size / 5) * j + p->tile_size / 10;
         fill_square(p, i * p->tile_size, j * p->tile_size, 0x808080);
         fill_player(p, i * p->tile_size, j * p->tile_size, 0xFF0000);
-        // mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->imgset->img2, i * p->tile_size / 5, j * p->tile_size / 5);
-        // mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->imgset->img3, x, y);
         p->scene->map[j][i] = '0';
       } 
       i++;
@@ -570,15 +568,6 @@ int main(int ac, char **av)
 		return (ft_error("Error initializing mlx\n"));
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
   	p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
-    p->imgs = malloc(sizeof(t_imgs));
-    p->imgs->north = mlx_xpm_file_to_image(p->mlx_p, "wall2.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->south = mlx_xpm_file_to_image(p->mlx_p, "wall1.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->east = mlx_xpm_file_to_image(p->mlx_p, "wall3.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgs->west = mlx_xpm_file_to_image(p->mlx_p, "wall4.xpm", &p->imgs->w, &p->imgs->h);
-    p->imgset = malloc(sizeof(t_imgset)); 
-    p->imgset->img1 = mlx_xpm_file_to_image(p->mlx_p, "ground.xpm", &w, &h);
-    p->imgset->img2 = mlx_xpm_file_to_image(p->mlx_p, "wall.xpm", &w, &h);
-    p->imgset->img3 = mlx_xpm_file_to_image(p->mlx_p, "p.xpm", &w, &h);
   	step2(p);
   	mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   	mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
