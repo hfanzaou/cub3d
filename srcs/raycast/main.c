@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/17 22:01:16 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 23:10:28 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,17 +349,19 @@ void  redraw(t_mlx *p)
   }
 }
 
-// float put_dir(t_mlx *p)
-// {
-//   if (p->scene->p_dir == 'N')
-//     return (M_PI / 2);
-//   else if (p->scene->p_dir == 'S')
-//     return (M_PI * 3 / 2);
-//   else if (p->scene->p_dir == 'W')
-//     return (0);
-//   else if (p->scene->p_dir == 'E')
-//     return (M_PI);    
-// }
+float put_dir(t_mlx *p)
+{
+  if (p->scene->player_dir == 'N')
+    return (M_PI / 2);
+  if (p->scene->player_dir == 'S')
+    return (M_PI * 3 / 2);
+  if (p->scene->player_dir == 'W')
+    return (0);
+  if (p->scene->player_dir == 'E')
+    return (M_PI);
+  return (-1);      
+}
+
 t_mlx *p_init(char *path)
 {
     t_mlx *p;
@@ -369,7 +371,7 @@ t_mlx *p_init(char *path)
 	p->scene = map_parse(path);
 	if (!p->scene)
 		return (NULL);
-    p->rot_angle = 0;
+    p->rot_angle = put_dir(p);
     p->turnspeed = 5 * (M_PI / 180);
     p->walkspeed = 7;
     p->slide_angle = M_PI / 2;
@@ -451,6 +453,7 @@ int draw_mini(t_mlx *p)
   fill_player(p, p->x, p->y, 0xFF0000);
   return (0);
 }
+
 int  step(void *ptr)
 {
 
