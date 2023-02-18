@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/17 22:59:02 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 00:03:47 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,9 @@ int	check_walls(char *line)
 		return (0);
 	i = 0;
 	line_len = ft_strlen(line);
-	while (line[i] == ' ')
+	while (is_space(line[i]))
 		i++;
-	while (line[line_len - 1] == ' ')
+	while (is_space(line[line_len - 1]))
 		line_len--;
 	if (line[i] != '1' || line[line_len - 1] != '1')
 		return (ft_error("Map must be surrounded by walls\n"));
@@ -161,89 +161,6 @@ int map_check(char **file, t_scene *scene)
     return (0);
 }
 
-int	is_byte(int n)
-{
-	if (n <= 255 && n >= 0)
-		return (0);
-	return (1);
-}
-
-int rgb_int(char *line)
-{
-    int		res;
-	char	**rgb;
-
-	res = 0;
-	rgb = ft_split(line, ',');
-	if (strlen2(rgb) != 3)
-		return (ft_error("Invalid color format (R,G,B)\n"));
-	if (is_byte(ft_atoi(*rgb)) || is_byte(ft_atoi(rgb[1])) || is_byte(ft_atoi(rgb[2])))
-		return (ft_error("Colors must be in range [0,255]\n"));
-	res = (ft_atoi(*rgb) << 16 | ft_atoi(rgb[1]) << 8 | ft_atoi(rgb[2]));
-	ft_free(rgb);
-	return (res);
-}
-
-int	get_elements(t_scene *scene)
-{
-	if (scene->north_tex && scene->south_tex && scene->west_tex
-		&& scene->east_tex && scene->floor && scene->ceiling)
-		return (1);
-	return (0);
-}
-
-int	identifier_check(char **iden_path, t_scene *scene)
-{
-    if (!strcmp(*iden_path, "NO"))
-		scene->north_tex = iden_path[1];
-    else if (!strcmp(*iden_path, "SO"))
-        scene->south_tex = iden_path[1];
-    else if (!strcmp(*iden_path, "EA"))
-        scene->east_tex = iden_path[1];
-    else if (!strcmp(*iden_path, "WE"))
-        scene->west_tex = iden_path[1];
-    else if (!strcmp(*iden_path, "F"))
-	{
-        scene->floor = rgb_int(iden_path[1]);
-		if (scene->floor == -1)
-			return (1);
-	}
-    else if (!strcmp(*iden_path, "C"))
-	{
-        scene->ceiling = rgb_int(iden_path[1]);
-		if (scene->ceiling == -1)
-			return (1);
-	}
-    else
-        return (1);
-    return (0);
-}
-
-int elements_check(char ***file, t_scene *scene)
-{
-    char    **split;
-
-    while (**file)
-    {
-		if (!strcmp(**file, ""))
-		{
-			(*file)++;
-			continue ;
-		}
-        split = ft_split(**file, ' ');
-		if (strlen2(split) != 2)
-			return (ft_error(NULL));
-		if (identifier_check(split, scene))
-			return (1);
-		(*file)++;
-		if (get_elements(scene))
-			break ;
-    }
-	while ((**file) && !strcmp(**file, ""))
-		(*file)++;
-	return (0);
-}
-
 void	map_dimensions(t_scene *scene)
 {
 	int	i;
@@ -263,59 +180,6 @@ void	map_dimensions(t_scene *scene)
 	scene->map_w = width;
 }
 
-int	path_check(char *path)
-{
-    int fd;
-
-    if (strcmp(&path[strlen(path) - 4], ".cub"))
-        return (ft_error("invalid map format\n"));
-    fd = open(path, O_RDONLY);
-	if (fd == -1)
-        perror("Error! ");
-    return (fd);
-}
-
-int lines_count(char *path)
-{
-    int tmp_fd;
-    int count;
-
-    count = 0;
-    tmp_fd = open(path, O_RDONLY);
-    while (get_next_line(tmp_fd))
-        count++;
-	close(tmp_fd);
-    return (count);
-}
-
-void	remove_newline(char **str)
-{
-	int	len;
-
-	len = ft_strlen(*str) - 1;
-	if ((*str)[len] == '\n')
-		(*str)[len] = '\0';
-}
-
-char	**read_file(int fd, char *path)
-{
-	char	**file;
-	int		count;
-	int		i;
-
-	i = 0;
-	count = lines_count(path);
-	file = malloc (sizeof(char *) * (count + 1));
-	while (i < count)
-	{
-		file[i] = get_next_line(fd);
-		remove_newline(&(file[i]));
-		i++;
-	}
-	file[i] = NULL;
-	return (file);
-}
-
 void	print_scene(t_scene *scene)
 {
 	int	i;
@@ -332,18 +196,17 @@ void	print_scene(t_scene *scene)
 	while (scene->map[i])
 		printf("%s\n", scene->map[i++]);
 	printf("width: %d\nheight: %d\nplayer_dir %c\n", scene->map_w, scene->map_h, scene->player_dir);
+	
 }
 
 t_scene	*map_parse(char *path)
 {
     t_scene *scene;
 	char	**file;
-	int     fd;
 
-	fd = path_check(path);
-    if (fd == -1)
-        return (NULL);
-	file = read_file(fd, path);
+	file = read_file(path);
+	if (!file)
+		return (NULL);
     scene = malloc(sizeof(t_scene));
 	ft_memset(scene, 0, sizeof(t_scene));
 	if (elements_check(&file, scene))
@@ -351,6 +214,7 @@ t_scene	*map_parse(char *path)
     if (map_check(file, scene))
     	return (NULL);
 	map_dimensions(scene);
-	print_scene(scene);
+	// print_scene(scene);
+	write(1, "got herex", 10);
     return (scene);
 }

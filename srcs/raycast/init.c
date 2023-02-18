@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:24:38 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/17 23:55:07 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/18 00:13:44 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ int step_init(t_mlx *p)
   float x;
   float y;
   float slide;
-    step = (p->walk_dir * p->walkspeed);
+  
+  step = (p->walk_dir * p->walkspeed);
   slide = (p->slide_dir * p->walkspeed);
-
   p->rot_angle += (p->turn_dir * p->turnspeed);
   p->slide_angle = p->rot_angle - (M_PI / 2);
   x = p->x + cos(p->rot_angle) * (step) + cos(p->slide_angle) * slide;
@@ -32,7 +32,8 @@ int step_init(t_mlx *p)
   }
   p->x = x;
   p->y = y;
-  mlx_clear_window(p->mlx_p, p->mlx_win);
+  //write(1, "got herex", 10);
+  //mlx_clear_window(p->mlx_p, p->mlx_win);
   redraw(p);
   ft_raycast(p);
   draw_mini(p);
@@ -59,7 +60,6 @@ t_mlx *p_init(char *path)
     p = malloc(sizeof(t_mlx));
     ft_memset(p, 0, sizeof(t_mlx));
 	p->scene = map_parse(path);
-	 printf("here");
 	if (!p->scene)
 		return (NULL);
     p->rot_angle = put_dir(p);
@@ -68,5 +68,6 @@ t_mlx *p_init(char *path)
     p->slide_angle = M_PI / 2;
     p->tile_size = 50;
     p->bpp = 1;
+    write(1, "got herex", 10);
     return (p);
 }

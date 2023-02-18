@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/17 23:31:35 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/17 23:58:03 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,13 @@ typedef struct s_cor
 }  t_cor;
 
 t_scene *map_parse(char *path);
-int		ft_error(char *err_msg);
-int		strlen2(char **ptr);
-int get_texture(t_cor *inter, t_ray *ray);
-int textures_init(t_mlx *p);
+int		  ft_error(char *err_msg);
+int		  strlen2(char **ptr);
+int     get_texture(t_cor *inter, t_ray *ray);
+int     textures_init(t_mlx *p);
+int     elements_check(char ***file, t_scene *scene);
+char    **read_file(char *path);
+void    ft_free(char **ptr);
 
 
 
