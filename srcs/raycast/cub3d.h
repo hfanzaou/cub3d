@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/18 10:03:54 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 10:18:10 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,8 +128,8 @@ int step_init(t_mlx *p);
 
 
 //============drawing========//
-void  redraw(t_mlx *p);
-int  draw_mini(t_mlx *p, float angle);
+int   draw_mini(t_mlx *p);
+int   draw_wall(t_mlx *p, t_ray *ray, t_cor *cor);
 
 
 int   check_collision(t_scene *map, int x, int y, int i);
