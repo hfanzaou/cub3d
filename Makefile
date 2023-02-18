@@ -6,7 +6,7 @@
 #    By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 04:48:24 by hfanzaou          #+#    #+#              #
-#    Updated: 2023/02/18 08:50:33 by hfanzaou         ###   ########.fr        #
+#    Updated: 2023/02/18 09:50:59 by hfanzaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = cub3d
 
 LIBFT = libft.a
 
-SRCS = srcs/raycast/main.c srcs/raycast/init.c srcs/raycast/hooks.c srcs/raycast/map_parse.c srcs/raycast/textures.c srcs/raycast/get_next_line/get_next_line.c srcs/raycast/get_next_line/get_next_line_utils.c
+SRCS = srcs/raycast/main.c srcs/raycast/raycast.c srcs/raycast/big_draw.c srcs/raycast/mini_draw.c srcs/raycast/init.c srcs/raycast/hooks.c srcs/raycast/map_parse.c srcs/raycast/textures.c srcs/raycast/get_next_line/get_next_line.c srcs/raycast/get_next_line/get_next_line_utils.c
 
 SFLAGS = -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit -I /usr/locale/include 
 
