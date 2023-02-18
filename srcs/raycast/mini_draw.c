@@ -6,51 +6,55 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:36:39 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 09:47:03 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/18 23:44:30 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void fill_square(t_mlx *p, int x, int y, int r)
+void	fill_square(t_mlx *p, int x, int y, int r)
 {
-  int i;
-  int j;
-  i = 0;
-  while (i < r * 2)
-  {
-    j = 0;
-    while (j < r * 2)
-    {
-      if (i == 0 || j == 0 || i == r * 2 - 1 || j == r * 2 - 1)
-        ((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j] = 0x000000;
-      else if (p->scene->map[y / p->tile_size][x / p->tile_size] == '0')
-        ((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j] = 0x808080;
-      else
-         ((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j] = 0xFFFFFF;  
-      j += 2;
-    }
-    i += 2;
-  }
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < r * 2)
+	{
+		j = 0;
+		while (j < r * 2)
+		{
+			if (i == 0 || j == 0 || i == r * 2 - 1 || j == r * 2 - 1)
+				((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j]
+					= 0x000000;
+			else if (p->scene->map[y / p->tile_size][x / p->tile_size] == '0')
+				((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j]
+					= 0x808080;
+			else
+				((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j]
+					= 0xFFFFFF;  
+			j += 2;
+		}
+		i += 2;
+	}
 }
 
-void  fill_player(t_mlx *p, int x, int y, int r)
+void	fill_player(t_mlx *p, int x, int y, int r)
 {
-  int i;
-  int j;
-  
-  i = -2;
-  j = -2;
-  while (i < 2)
-  {
-    j = -2;
-    while (j < 2)
-    {
-      ((unsigned int *)p->xpm)[(y / r + i) * 1200 + x/r + j] = 0xFF0000;
-      j++;
-    }
-    i++;
-  }
+	int	i;
+	int	j;
+
+	i = -2;
+	j = -2;
+	while (i < 2)
+	{
+		j = -2;
+		while (j < 2)
+		{
+			((unsigned int *)p->xpm)[(y / r + i) * 1200 + x/r + j] = 0xFF0000;
+			j++;
+		}
+		i++;
+	}
 }
 
 void fill_all(t_mlx *p, int i, int j, int r)
