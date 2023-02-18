@@ -6,7 +6,11 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/02/18 06:08:36 by ajana            ###   ########.fr       */
+=======
+/*   Updated: 2023/02/18 08:49:58 by hfanzaou         ###   ########.fr       */
+>>>>>>> 0b398760de84a12635932bd42400f231714c938d
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +22,7 @@
 #include <math.h>
 #include "mlx.h"
 #include "libft/libft.h"
+#include "get_next_line/get_next_line.h"
 
 enum tex_id
 {
@@ -72,6 +77,7 @@ typedef struct s_mlx
   void   *img;
    int size_line;
   int endian;
+  int close;
   t_tex *textures;
   t_scene *scene;
 }         t_mlx;
@@ -126,8 +132,9 @@ int step_init(t_mlx *p);
 
 //============drawing========//
 void  redraw(t_mlx *p);
-int  draw_mini(t_mlx *p);
+int  draw_mini(t_mlx *p, float angle);
 
 
 int   check_collision(t_scene *map, int x, int y, int i);
-t_ray *ft_raycast(t_mlx *p);
+void  ft_raycast(t_mlx *p);
+int  step(void *ptr);
