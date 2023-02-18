@@ -6,36 +6,44 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:20:24 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/17 23:21:49 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 06:40:42 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 #include "get_next_line/get_next_line.h"
 
-int	path_check(char *path)
+int	ft_error(char *err_msg)
 {
-    int fd;
-
-    if (strcmp(&path[strlen(path) - 4], ".cub"))
-        return (ft_error("invalid map format\n"));
-    fd = open(path, O_RDONLY);
-	if (fd == -1)
-        ft_error("Error opening file\n");
-    return (fd);
+	ft_putstr_fd("Error\n", 2);
+	if (err_msg)
+		ft_putstr_fd(err_msg, 2);
+	return (-1);
 }
 
-int lines_count(char *path)
+int	path_check(char *path)
 {
-    int tmp_fd;
-    int count;
+	int	fd;
 
-    count = 0;
-    tmp_fd = open(path, O_RDONLY);
-    while (get_next_line(tmp_fd))
-        count++;
+	if (strcmp(&path[strlen(path) - 4], ".cub"))
+		return (ft_error("Invalid map extension\n"));
+	fd = open(path, O_RDONLY);
+	if (fd == -1)
+		ft_error("Error opening file\n");
+	return (fd);
+}
+
+int	lines_count(char *path)
+{
+	int	tmp_fd;
+	int	count;
+
+	count = 0;
+	tmp_fd = open(path, O_RDONLY);
+	while (get_next_line(tmp_fd))
+		count++;
 	close(tmp_fd);
-    return (count);
+	return (count);
 }
 
 void	remove_newline(char **str)

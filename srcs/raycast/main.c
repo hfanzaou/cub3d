@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 01:36:11 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 05:04:40 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -465,14 +465,15 @@ int main(int ac, char **av)
   	  return (0);
   	p = p_init(av[1]);
   	if (!p)
-		return (1);
+		  return (1);
   	p->mlx_p = mlx_init();
 	  p->mlx_win = mlx_new_window(p->mlx_p, 1200, 1200, "cub3d");
   	if (!(p->mlx_p) || !(p->mlx_win))
 		return (ft_error("Error initializing mlx\n"));
   	p->img = mlx_new_image(p->mlx_p, 1200, 1200);
   	p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
-    textures_init(p);
+    if (textures_init(p))
+      return (1);
   	step_init(p);
   	mlx_hook(p->mlx_win, 2, 0, key_hook, p);
   	mlx_hook(p->mlx_win, 3, 0, key_hook2, p);

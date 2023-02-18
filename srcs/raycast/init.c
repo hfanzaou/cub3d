@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:24:38 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 01:36:34 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 01:40:32 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,5 @@ t_mlx *p_init(char *path)
     p->slide_angle = M_PI / 2;
     p->tile_size = 50;
     p->bpp = 1;
-    write(1, "got herex", 10);
     return (p);
 }

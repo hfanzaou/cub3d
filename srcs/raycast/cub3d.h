@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/17 23:58:03 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 06:08:36 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "mlx.h"
-#include "get_next_line/get_next_line.h"
 #include "libft/libft.h"
 
 enum tex_id
@@ -106,6 +105,10 @@ int     textures_init(t_mlx *p);
 int     elements_check(char ***file, t_scene *scene);
 char    **read_file(char *path);
 void    ft_free(char **ptr);
+int     map_check(char **file, t_scene *scene);
+int	    is_space(char c);
+int     got_all_elements(t_scene *scene);
+int     is_closed(char *line, char *up_line, char *down_line, int ind);
 
 
 
