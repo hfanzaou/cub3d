@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/18 06:21:05 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 10:07:38 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,22 @@ t_scene	*map_parse(char *path)
 {
 	t_scene	*scene;
 	char	**file;
+	char	**to_free;
+	int		count;
 
-	file = read_file(path);
-	if (!file)
+	count = lines_count(path);
+	file = malloc ((count + 1) * sizeof(char *));
+	if (!file || read_file(path, file, count))
 		return (NULL);
 	scene = malloc(sizeof(t_scene));
 	ft_memset(scene, 0, sizeof(t_scene));
+	to_free = file;
 	if (elements_check(&file, scene))
 		return (NULL);
 	if (map_check(file, scene))
 		return (NULL);
 	map_dimensions(scene);
+	ft_free(to_free);
+	free(to_free);
 	return (scene);
 }

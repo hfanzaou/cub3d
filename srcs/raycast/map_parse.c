@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 01:43:37 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/18 09:10:40 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 09:33:18 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ int	map_check(char **file, t_scene *scene)
 			return (1);
 		else if (mapline_check(file, scene, &player_pos))
 			return (1);
-		scene->map[i] = *file;
+		scene->map[i] = ft_strdup(*file);
+		// free(*file);
 		i++;
 		file++;
 	}

@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:09:38 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/18 08:26:17 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 09:38:38 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,14 @@ int	rgb_int(int *res, char *line)
 	if (is_byte(*rgb) || is_byte(rgb[1]) || is_byte(rgb[2]))
 	{
 		ft_free(rgb);
+		free(rgb);
 		return (1);
 	}
 	else
 	{
 		*res = (ft_atoi(*rgb) << 16 | ft_atoi(rgb[1]) << 8 | ft_atoi(rgb[2]));
 		ft_free(rgb);
+		free(rgb);
 		return (0);
 	}
 }
@@ -60,7 +62,8 @@ int	check_path(char *path, char **tex)
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 		return (ft_error("Invalid texture path\n"));
-	*tex = path;
+	close(fd);
+	*tex = ft_strdup(path);
 	return (0);
 }
 
@@ -99,9 +102,10 @@ int	elements_check(char ***file, t_scene *scene)
 			return (ft_error("Invalid scene element\n"));
 		if (identifier_check(split, scene))
 			return (1);
+		ft_free(split);
 		free(split);
-		free(*split);
 		(*file)++;
+		// free(*(file - 1));
 		if (got_all_elements(scene))
 			break ;
 	}
