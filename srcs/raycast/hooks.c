@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:19:27 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 05:12:17 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/18 09:24:56 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ int key_hook(int key, t_mlx *p)
   if (key == 2)
     p->slide_dir = 1;
   if (key == 0)
-    p->slide_dir = -1;   
+    p->slide_dir = -1;
+  if (key == 53)
+    exit(0);     
   return (0); 
 }
 

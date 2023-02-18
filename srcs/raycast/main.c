@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 09:11:22 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/18 09:23:59 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,17 @@ int ft_exit(void)
 {
     exit(0); 
 }
-int ft_close(t_mlx *p)
+int ft_close(int keycode, t_mlx *p)
 {
   (void)p;
-  ft_exit();
-	return (0);
+  if (keycode == 53)
+  {
+    p->close = 1;
+    ft_exit();
+  }
+  else  
+	  return (0);
+  return (0);  
 }
 
 t_ray *ft_norm(t_ray *ray)
@@ -432,7 +438,7 @@ int  step(void *ptr)
   float slide;
   slide = 0;
   step = 0;
-  if (p->walk_dir == 0 && p->turn_dir == 0 && p->slide_dir == 0)
+  if (p->walk_dir == 0 && p->turn_dir == 0 && p->slide_dir == 0 && p->close)
     return (0);
     step = (p->walk_dir * p->walkspeed); 
     slide = (p->slide_dir * p->walkspeed);
@@ -475,6 +481,7 @@ int main(int ac, char **av)
   	mlx_hook(p->mlx_win, 3, 0, key_hook2, p);
   	mlx_hook(p->mlx_win, 6, 0, mouse_hook, p);
   	mlx_loop_hook(p->mlx_p, step, (void *)p);
-    mlx_hook(p->mlx_win, 17, 0, ft_close, &p);
+    mlx_hook(p->mlx_win, 17, 0, ft_exit, &p);
+    //mlx_key_hook(p->mlx_win, ft_close, p);
 	  mlx_loop(p->mlx_p);
 }
