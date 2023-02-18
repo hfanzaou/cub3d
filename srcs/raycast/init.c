@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:24:38 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 00:13:44 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 01:36:34 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ int step_init(t_mlx *p)
   float x;
   float y;
   float slide;
-  
-  step = (p->walk_dir * p->walkspeed);
+  redraw(p);
+    step = (p->walk_dir * p->walkspeed);
   slide = (p->slide_dir * p->walkspeed);
   p->rot_angle += (p->turn_dir * p->turnspeed);
   p->slide_angle = p->rot_angle - (M_PI / 2);
@@ -32,9 +32,7 @@ int step_init(t_mlx *p)
   }
   p->x = x;
   p->y = y;
-  //write(1, "got herex", 10);
   //mlx_clear_window(p->mlx_p, p->mlx_win);
-  redraw(p);
   ft_raycast(p);
   draw_mini(p);
   mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
