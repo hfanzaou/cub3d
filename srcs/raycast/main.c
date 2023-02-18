@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 09:03:32 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/18 09:11:22 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ int fun_free(t_mlx *p)
     return(0);
 }
 
-int ft_exit(t_mlx *p)
+int ft_exit(void)
 {
-    fun_free(p);
     exit(0); 
 }
 int ft_close(t_mlx *p)
 {
-  p->close = 1;
+  (void)p;
+  ft_exit();
 	return (0);
 }
 
@@ -432,15 +432,10 @@ int  step(void *ptr)
   float slide;
   slide = 0;
   step = 0;
-  if (p->close)
-    ft_exit(p);
   if (p->walk_dir == 0 && p->turn_dir == 0 && p->slide_dir == 0)
     return (0);
-  if (p->walk_dir)  
-    step = (p->walk_dir * p->walkspeed);
-  if (p->slide_dir)  
+    step = (p->walk_dir * p->walkspeed); 
     slide = (p->slide_dir * p->walkspeed);
-  if (p->turn_dir)   
     p->rot_angle += (p->turn_dir * p->turnspeed);
   p->slide_angle = p->rot_angle - (M_PI / 2);
   x = p->x + cos(p->rot_angle) * (step) + cos(p->slide_angle) * slide;
@@ -452,13 +447,10 @@ int  step(void *ptr)
   }
   p->x = x;
   p->y = y;
-  // p->img = mlx_new_image(p->mlx_p, 1200, 1200);
-  // p->xpm = mlx_get_data_addr(p->img, &p->bpp, &p->size_line, &p->endian);
   mlx_clear_window(p->mlx_p, p->mlx_win);
   ft_raycast(p);
   draw_mini(p, p->rot_angle - p->fov/2);
   mlx_put_image_to_window(p->mlx_p, p->mlx_win, p->img, 0, 0);
-   //mlx_destroy_image(p->mlx_p, p->img);
   return (0);
 }
 
