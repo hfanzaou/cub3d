@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/19 03:01:55 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 03:15:30 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,11 +125,12 @@ int		mouse_hook(int x, int y, t_mlx *p);
 //===============INITIALIZE==================//
 t_mlx	*p_init(char *path);
 int		step_init(t_mlx *p);
+int		ft_exit(void);
+int		ft_close(int keycode, t_mlx *p);
 
 //============drawing========//
 int		draw_mini(t_mlx *p);
 int		draw_wall(t_mlx *p, t_ray *ray, t_cor *cor);
-int		check_collision(t_scene *map, int x, int y, int i);
 int		get_x(t_mlx *p, t_cor *cor, float wall_hight, t_ray *ray);
 int		get_color(t_tex *img, int x, int y);
 
@@ -143,5 +144,10 @@ void	intersec(t_mlx *p, t_ray *ray);
 void	intersec2(t_mlx *p, t_ray *ray);
 t_cor	*put_cor(float x, float y, t_cor *cor);
 int		beyond_map(float ray_x, float ray_y, t_mlx *p);
+
+//===========MOVEMENT=============//
+int		step(void *ptr);
+int		edit_cor(t_mlx *p);
+int		check_collision(t_scene *map, int x, int y, int i);
 
 #endif

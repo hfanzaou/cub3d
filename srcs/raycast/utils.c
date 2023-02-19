@@ -6,11 +6,25 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 21:59:39 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 01:18:14 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 03:14:56 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+int	ft_close(int keycode, t_mlx *p)
+{
+	(void)p;
+	if (keycode == 53)
+	{
+		p->close = 1;
+		ft_exit();
+	}
+	else
+		return (0);
+	return (0);
+}
+
 //======draw_utils=====//
 int	get_color(t_tex *img, int x, int y)
 {
@@ -43,7 +57,6 @@ int	get_x(t_mlx *p, t_cor *cor, float wall_hight, t_ray *ray)
 }
 
 //=======raycast_utils======//
-
 int	beyond_map(float ray_x, float ray_y, t_mlx *p)
 {
 	if (ray_y > p->scene->map_h * p->tile_size
