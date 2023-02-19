@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/19 00:57:38 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 02:42:25 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,16 +124,25 @@ int mouse_hook(int x, int y, t_mlx *p);
 
 
 //===============INITIALIZE==================//
-
 t_mlx *p_init(char *path);
 int step_init(t_mlx *p);
 
 
 //============drawing========//
-int   draw_mini(t_mlx *p);
-int   draw_wall(t_mlx *p, t_ray *ray, t_cor *cor);
+int draw_mini(t_mlx *p);
+int draw_wall(t_mlx *p, t_ray *ray, t_cor *cor);
+int check_collision(t_scene *map, int x, int y, int i);
+int get_x(t_mlx *p, t_cor *cor, float wall_hight, t_ray *ray);
+int get_color(t_tex *img, int x, int y);
 
 
-int   check_collision(t_scene *map, int x, int y, int i);
+//============RAYCASTING=========//
 void  ft_raycast(t_mlx *p);
 int  step(void *ptr);
+t_ray *ft_norm(t_ray *ray);
+int ft_dir(int dir, int f);
+int raydir(float ray);
+void  intersec(t_mlx *p, t_ray *ray);
+void  intersec2(t_mlx *p, t_ray *ray);
+t_cor *put_cor(float x, float y, t_cor *cor);
+int beyond_map(float ray_x, float ray_y, t_mlx *p);
