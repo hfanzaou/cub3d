@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:24:38 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 02:42:10 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 02:43:57 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ t_mlx	*p_init(char *path)
 
 	p = malloc(sizeof(t_mlx));
 	ft_memset(p, 0, sizeof(t_mlx));
-	p->scene = map_parse(path);
+	p->scene = scene_parse(path);
 	if (!p->scene)
 		return (NULL);
 	p->rot_angle = put_dir(p);
