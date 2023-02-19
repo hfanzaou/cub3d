@@ -6,11 +6,11 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:20:24 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/19 05:29:51 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 06:03:57 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 int	ft_error(char *err_msg)
 {

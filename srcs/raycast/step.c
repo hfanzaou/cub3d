@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   step.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/19 03:06:21 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 05:48:52 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 06:04:33 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 int	ft_exit(void)
 {

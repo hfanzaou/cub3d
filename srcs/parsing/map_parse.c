@@ -6,11 +6,11 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 01:43:37 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/19 05:27:40 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 06:03:51 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 int	check_component(int c, int *player_pos)
 {

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   mini_draw.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:36:39 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 00:54:51 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 06:04:24 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 void	fill_square(t_mlx *p, int x, int y, int r)
 {

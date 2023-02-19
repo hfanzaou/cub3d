@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:30:29 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 05:48:56 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 06:04:30 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 t_cor	*ft_hor(t_mlx *p, t_ray *ray, int f)
 {

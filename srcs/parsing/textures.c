@@ -6,11 +6,11 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 23:08:20 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/18 06:40:26 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 06:04:03 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 int	set_tex(t_tex *texture, char *path, void *mlx_p)
 {
