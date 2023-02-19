@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:36:39 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 23:44:30 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 00:54:51 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	fill_square(t_mlx *p, int x, int y, int r)
 					= 0x808080;
 			else
 				((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j]
-					= 0xFFFFFF;  
+					= 0xFFFFFF;
 			j += 2;
 		}
 		i += 2;
@@ -50,49 +50,50 @@ void	fill_player(t_mlx *p, int x, int y, int r)
 		j = -2;
 		while (j < 2)
 		{
-			((unsigned int *)p->xpm)[(y / r + i) * 1200 + x/r + j] = 0xFF0000;
+			((unsigned int *)p->xpm)[(y / r + i) * 1200 + x / r + j] = 0xFF0000;
 			j++;
 		}
 		i++;
 	}
 }
 
-void fill_all(t_mlx *p, int i, int j, int r)
+void	fill_all(t_mlx *p, int i, int j, int r)
 {
-  if (p->scene->map[j][i] == '1')
-    fill_square(p, i * p->tile_size, j * p->tile_size, r);
-  else if (p->scene->map[j][i] == '0')
-    fill_square(p, i * p->tile_size, j * p->tile_size, r);
-  if (ft_strchr("NSEW", p->scene->map[j][i]))
-  {
-    fill_square(p, i * p->tile_size, j * p->tile_size, r);
-    fill_player(p, i * p->tile_size, j * p->tile_size, r);
-    p->scene->map[j][i] = '0';
-  } 
+	if (p->scene->map[j][i] == '1')
+		fill_square(p, i * p->tile_size, j * p->tile_size, r);
+	else if (p->scene->map[j][i] == '0')
+		fill_square(p, i * p->tile_size, j * p->tile_size, r);
+	if (ft_strchr("NSEW", p->scene->map[j][i]))
+	{
+		fill_square(p, i * p->tile_size, j * p->tile_size, r);
+		fill_player(p, i * p->tile_size, j * p->tile_size, r);
+		p->scene->map[j][i] = '0';
+	}
 }
 
-int draw_mini(t_mlx *p)
+int	draw_mini(t_mlx *p)
 {
-  char **map;
-  int j;
-  int i;
-  int r;
-  
-  j = 0;
-  map = p->scene->map;
-  r = 5;
-  while (p->tile_size / r * p->scene->map_h > 1200 || p->tile_size / r * p->scene->map_w > 1200)
-    r++;
-  while (map[j])
-  {
-    i = 0;
-    while (map[j][i])
-    {
-      fill_all(p, i, j, r);
-      i++;
-    }
-    j++;
-  }
-  fill_player(p, p->x, p->y, r);
-  return (0);
+	char	**map;
+	int		j;
+	int		i;
+	int		r;
+
+	j = 0;
+	map = p->scene->map;
+	r = 5;
+	while (p->tile_size / r * p->scene->map_h > 1200
+		|| p->tile_size / r * p->scene->map_w > 1200)
+		r++;
+	while (map[j])
+	{
+		i = 0;
+		while (map[j][i])
+		{
+			fill_all(p, i, j, r);
+			i++;
+		}
+		j++;
+	}
+	fill_player(p, p->x, p->y, r);
+	return (0);
 }
