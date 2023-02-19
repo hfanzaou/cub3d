@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 04:46:46 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/18 10:17:43 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 01:40:32 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int main(int ac, char **av)
   	  return (0);
   	p = p_init(av[1]);
   	if (!p)
-		  return (1);
+		  return (0);
   	p->mlx_p = mlx_init();
 	  p->mlx_win = mlx_new_window(p->mlx_p, 1200, 1200, "cub3d");
   	if (!(p->mlx_p) || !(p->mlx_win))

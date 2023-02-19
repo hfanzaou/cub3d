@@ -6,11 +6,11 @@
 #    By: ajana <ajana@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 04:48:24 by hfanzaou          #+#    #+#              #
-#    Updated: 2023/02/18 10:20:22 by ajana            ###   ########.fr        #
+#    Updated: 2023/02/19 00:58:29 by ajana            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = cub3d
+NAME = cub3D
 
 LIBFT = libft.a
 
@@ -19,7 +19,7 @@ SRCS = srcs/raycast/main.c srcs/raycast/raycast.c srcs/raycast/big_draw.c srcs/r
 
 SFLAGS = -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit -I /usr/locale/include 
 
-FLAGS = -Wall -Werror -Wextra -D BUFFER_SIZE=1 #-fsanitize=address
+FLAGS = -Wall -Werror -Wextra -D BUFFER_SIZE=1 -fsanitize=address
 
 CC = gcc
 

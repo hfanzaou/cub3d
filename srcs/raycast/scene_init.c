@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/18 10:07:38 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/18 21:50:44 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	print_scene(t_scene *scene)
 		scene->map_w, scene->map_h, scene->player_dir);
 }
 
-t_scene	*map_parse(char *path)
+t_scene	*scene_parse(char *path)
 {
 	t_scene	*scene;
 	char	**file;
@@ -66,7 +66,7 @@ t_scene	*map_parse(char *path)
 	to_free = file;
 	if (elements_check(&file, scene))
 		return (NULL);
-	if (map_check(file, scene))
+	if (map_parse(file, scene))
 		return (NULL);
 	map_dimensions(scene);
 	ft_free(to_free);

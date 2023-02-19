@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/18 10:18:10 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 00:57:38 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,8 @@ typedef struct s_cor
   int f;
 }  t_cor;
 
-t_scene *map_parse(char *path);
+t_scene	*scene_parse(char *path);
+int     map_parse(char **file, t_scene *scene);
 int		  ft_error(char *err_msg);
 int		  strlen2(char **ptr);
 int     get_texture(t_cor *inter, t_ray *ray);
@@ -112,6 +113,7 @@ int     got_all_elements(t_scene *scene);
 int     is_closed(char *line, char *up_line, char *down_line, int ind);
 char	  *get_next_line(int fd);
 int     lines_count(char *path);
+int     is_empty_line(char *line);
 
 
 

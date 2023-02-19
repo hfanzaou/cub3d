@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 01:43:37 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/18 09:33:18 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 01:30:06 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,13 @@ int	check_walls(char *line)
 	int	line_len;
 	int	i;
 
-	if (!(*line))
+	if (!line || is_empty_line(line))
 		return (0);
 	i = 0;
 	line_len = ft_strlen(line);
-	while (is_space(line[i]))
+	while (line[i] && is_space(line[i]))
 		i++;
-	while (is_space(line[line_len - 1]))
+	while (line[i] && is_space(line[line_len - 1]))
 		line_len--;
 	if (line[i] != '1' || line[line_len - 1] != '1')
 		return (ft_error("Map must be surrounded by walls\n"));
@@ -95,7 +95,7 @@ int	mapline_check(char **file, t_scene *scene, int *player_pos)
 	return (0);
 }
 
-int	map_check(char **file, t_scene *scene)
+int	map_parse(char **file, t_scene *scene)
 {
 	int	i;
 	int	player_pos;
@@ -110,7 +110,6 @@ int	map_check(char **file, t_scene *scene)
 		else if (mapline_check(file, scene, &player_pos))
 			return (1);
 		scene->map[i] = ft_strdup(*file);
-		// free(*file);
 		i++;
 		file++;
 	}
