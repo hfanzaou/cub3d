@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 21:55:09 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 00:58:55 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 03:57:14 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	intersec2(t_mlx *p, t_ray *ray)
 	if (inter_dir == -1)
 	{
 		ray->hvx_inter = floor((p->x) / p->tile_size) * p->tile_size - 1;
-		ray->hvy_inter = p->y - ((p->x - ray->hvx_inter + 1) * tan(ray->ray));
+		ray->hvy_inter = p->y - ((p->x - ray->hvx_inter - 1) * tan(ray->ray));
 		ray->dy = -((p->tile_size * tan(ray->ray)));
 		ray->dx = -p->tile_size;
 	}

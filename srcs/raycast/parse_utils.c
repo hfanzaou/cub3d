@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 05:45:57 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/19 01:55:59 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 03:21:56 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,10 @@ int	got_all_elements(t_scene *scene)
 	return (0);
 }
 
-int	is_player_pos(char c)
-{
-	if (c == 'N' || c == 'E'
-		|| c == 'S' || c == 'W')
-		return (1);
-	return (0);
-}
-
 int	is_closed(char *line, char *up_line, char *down_line, int ind)
 {
-	if (line[ind] != '0' && !is_player_pos(line[ind]))
+	if (line[ind] != '0' && line[ind] != 'N' && line[ind] != 'E'
+		&& line[ind] != 'S' && line[ind] != 'W')
 		return (0);
 	else if (is_space(line[ind + 1]) || is_space(line[ind - 1])
 		|| is_space(up_line[ind]) || is_space(down_line[ind]))

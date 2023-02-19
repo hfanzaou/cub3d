@@ -6,11 +6,27 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/18 21:50:44 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 04:36:03 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+int	is_empty_line(char *line)
+{
+	int	i;
+
+	i = 0;
+	if (!line)
+		return (1);
+	while (line[i])
+	{
+		if (!is_space(line[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 void	map_dimensions(t_scene *scene)
 {
@@ -31,23 +47,47 @@ void	map_dimensions(t_scene *scene)
 	scene->map_w = width;
 }
 
-void	print_scene(t_scene *scene)
+int	ft_strcmp(char *s1, char *s2)
 {
-	int	i;
-
-	i = 0;
-	if (!scene)
+	if (!s1 || !s2)
+		return (1);
+	while ((*s1 && *s2) && (*s1 == *s2))
 	{
-		printf("null");
-		return ;
+		s1++;
+		s2++;
 	}
-	printf("no: %s\nso: %s\nwe: %s\nea: %s\nfloor: %x\nceiling: %x\n",
-		scene->north_tex, scene->south_tex, scene->west_tex,
-		scene->east_tex, scene->floor, scene->ceiling);
-	while (scene->map[i])
-		printf("%s\n", scene->map[i++]);
-	printf("width: %d\nheight: %d\nplayer_dir %c\n",
-		scene->map_w, scene->map_h, scene->player_dir);
+	if (*s1 || *s2)
+		return (1);
+	return (0);
+}
+
+int	elements_check(char ***file, t_scene *scene)
+{
+	char	**split;
+
+	scene->ceiling = -1;
+	scene->floor = -1;
+	while (**file)
+	{
+		if (!ft_strcmp(**file, "") || is_empty_line(**file))
+		{
+			(*file)++;
+			continue ;
+		}
+		split = ft_split(**file, ' ');
+		if (strlen2(split) != 2)
+			return (ft_error("Invalid scene element\n"));
+		if (identifier_check(split, scene))
+			return (1);
+		ft_free(split);
+		free(split);
+		(*file)++;
+		if (got_all_elements(scene))
+			break ;
+	}
+	while ((**file) && (!ft_strcmp(**file, "") || is_empty_line(**file)))
+		(*file)++;
+	return (0);
 }
 
 t_scene	*scene_parse(char *path)

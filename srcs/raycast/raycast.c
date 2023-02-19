@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:30:29 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 01:44:50 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 05:22:55 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ t_cor	*ft_hor(t_mlx *p, t_ray *ray, int f)
 		return (put_cor(ray->hvx_inter - 1, ray->hvy_inter - 1, cor));
 	while (p->scene->map
 		[(int)(ray->hvy_inter / 50)][(int)(ray->hvx_inter / 50)] == '0'
-		/*&& !check_collision(p->scene, (int)ray->hvx_inter, 
-		(int)ray->hvy_inter, 1)*/)
+		&& !check_collision(p->scene, (int)ray->hvx_inter,
+		(int)ray->hvy_inter, 1))
 	{
 		ray->hvy_inter += ray->dy;
 		ray->hvx_inter += ray->dx;

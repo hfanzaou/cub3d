@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   step.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/19 03:06:21 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 03:14:27 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 05:23:36 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,17 @@ int	ft_exit(void)
 
 int	check_collision(t_scene *map, int x, int y, int i)
 {
-	if (i == 1 && (map->map[(y + 1) / 50][x / 50] == '1'))
+	if (i == 1 && (map->map[(y + 1) / 50][x / 50] == '1')
+		&& (map->map[(y) / 50][x / 50] == '1'))
 		return (1);
-	if (i == 1 && (map->map[y / 50][(x + 1) / 50] == '1'))
+	if (i == 1 && (map->map[y / 50][(x + 1) / 50] == '1')
+		&& (map->map[(y) / 50][x / 50] == '1'))
+		return (1);
+	if (i == 1 && (map->map[y / 50][(x - 1) / 50] == '1')
+		&& (map->map[(y) / 50][x / 50] == '1'))
+		return (1);
+	if (i == 1 && (map->map[(y - 1) / 50][(x) / 50] == '1')
+		&& (map->map[(y) / 50][x / 50] == '0'))
 		return (1);
 	else if (i == 10)
 	{

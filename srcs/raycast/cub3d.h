@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/19 03:15:30 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 04:36:24 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
-# include <stdio.h>
 # include <math.h>
 # include "mlx.h"
 # include "libft/libft.h"
@@ -116,6 +115,8 @@ int		is_closed(char *line, char *up_line, char *down_line, int ind);
 char	*get_next_line(int fd);
 int		lines_count(char *path);
 int		is_empty_line(char *line);
+int		identifier_check(char **iden_path, t_scene *scene);
+int		ft_strcmp(char *s1, char *s2);
 
 //===================HOOKS==================//
 int		key_hook(int key, t_mlx *p);

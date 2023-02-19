@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:20:24 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/19 01:50:46 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 03:42:23 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	ft_error(char *err_msg)
 {
 	ft_putstr_fd("Error\n", 2);
-	// (void)err_msg;
 	if (err_msg)
 		ft_putstr_fd(err_msg, 2);
 	return (-1);
@@ -25,7 +24,7 @@ int	path_check(char *path)
 {
 	int	fd;
 
-	if (strcmp(&path[strlen(path) - 4], ".cub"))
+	if (strcmp(&path[ft_strlen(path) - 4], ".cub"))
 		return (ft_error("Invalid map extension\n"));
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
@@ -81,7 +80,10 @@ int	read_file(char *path, char **file, int lines_count)
 	}
 	file[i] = NULL;
 	while (i > 0 && is_empty_line(file[--i]))
+	{
+		free(file[i]);
 		file[i] = NULL;
+	}
 	if (*file == NULL)
 		return (ft_error("Empty file\n"));
 	return (0);
