@@ -2,6 +2,6 @@
 
 while [ 1 ]
 do
-    leaks cub3d
+    leaks cub3D | grep "leaked bytes"
     sleep 1
 done

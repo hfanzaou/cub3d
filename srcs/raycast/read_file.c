@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:20:24 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/18 10:02:54 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 01:50:46 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	ft_error(char *err_msg)
 {
 	ft_putstr_fd("Error\n", 2);
+	// (void)err_msg;
 	if (err_msg)
 		ft_putstr_fd(err_msg, 2);
 	return (-1);
@@ -79,5 +80,9 @@ int	read_file(char *path, char **file, int lines_count)
 		i++;
 	}
 	file[i] = NULL;
+	while (i > 0 && is_empty_line(file[--i]))
+		file[i] = NULL;
+	if (*file == NULL)
+		return (ft_error("Empty file\n"));
 	return (0);
 }

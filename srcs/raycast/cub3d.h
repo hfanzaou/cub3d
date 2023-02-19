@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/19 01:51:00 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 02:52:21 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,26 +94,28 @@ typedef struct s_ray
 
 typedef struct s_cor
 {
-	float	x;
-	float	y;
-	float	dis;
-	int		f;
-}			t_cor;
+  float x;
+  float y;
+  float dis;
+  int f;
+}  t_cor;
 
-t_scene	*map_parse(char *path);
-int		ft_error(char *err_msg);
-int		strlen2(char **ptr);
-int		get_texture(t_cor *inter, t_ray *ray);
-int		textures_init(t_mlx *p);
-int		elements_check(char ***file, t_scene *scene);
-int		read_file(char *path, char **file, int lines_count);
-void	ft_free(char **ptr);
-int		map_check(char **file, t_scene *scene);
-int		is_space(char c);
-int		got_all_elements(t_scene *scene);
-int		is_closed(char *line, char *up_line, char *down_line, int ind);
-char	*get_next_line(int fd);
-int		lines_count(char *path);
+t_scene	*scene_parse(char *path);
+int     map_parse(char **file, t_scene *scene);
+int		  ft_error(char *err_msg);
+int		  strlen2(char **ptr);
+int     get_texture(t_cor *inter, t_ray *ray);
+int     textures_init(t_mlx *p);
+int     elements_check(char ***file, t_scene *scene);
+int     read_file(char *path, char **file, int lines_count);
+void    ft_free(char **ptr);
+int     map_check(char **file, t_scene *scene);
+int	    is_space(char c);
+int     got_all_elements(t_scene *scene);
+int     is_closed(char *line, char *up_line, char *down_line, int ind);
+char	  *get_next_line(int fd);
+int     lines_count(char *path);
+int     is_empty_line(char *line);
 
 
 

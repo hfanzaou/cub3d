@@ -3,14 +3,18 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+         #
+#    By: ajana <ajana@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 04:48:24 by hfanzaou          #+#    #+#              #
+<<<<<<< HEAD
 #    Updated: 2023/02/19 01:14:09 by hfanzaou         ###   ########.fr        #
+=======
+#    Updated: 2023/02/19 02:41:06 by ajana            ###   ########.fr        #
+>>>>>>> 73ee936f0eeab9ee0cfa71548d000bc0ad94a436
 #                                                                              #
 # **************************************************************************** #
 
-NAME = cub3d
+NAME = cub3D
 
 LIBFT = libft.a
 
