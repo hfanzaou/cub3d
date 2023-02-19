@@ -1,12 +1,12 @@
 
-  NO  ./textures_xpm/wall5.xpm
+  WE  ./textures_xpm/bluestone.xpm
 
 SO  ./textures_xpm/wall6.xpm
 C 11,16,38
 
-WE  ./textures_xpm/wall7.xpm
+NO  ./textures_xpm/wall7.xpm
 
-EA   ./textures_xpm/wall8.xpm
+EA   ./textures_xpm/bluestone.xpm
 
 F 49,51,52
 
