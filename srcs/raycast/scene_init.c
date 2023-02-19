@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 12:25:07 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/19 04:36:03 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 05:30:27 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	map_dimensions(t_scene *scene)
 	scene->map_h = strlen2(scene->map);
 	while ((scene->map)[i])
 	{
-		len = strlen((scene->map)[i]);
+		len = ft_strlen((scene->map)[i]);
 		if (len > width)
 			width = len;
 		i++;

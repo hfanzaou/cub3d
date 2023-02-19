@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:20:24 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/19 03:42:23 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 05:29:51 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	path_check(char *path)
 {
 	int	fd;
 
-	if (strcmp(&path[ft_strlen(path) - 4], ".cub"))
+	if (ft_strcmp(&path[ft_strlen(path) - 4], ".cub"))
 		return (ft_error("Invalid map extension\n"));
 	fd = open(path, O_RDONLY);
 	if (fd == -1)

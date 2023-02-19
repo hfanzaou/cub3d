@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 01:43:37 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/19 01:30:06 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 05:27:40 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ int	map_parse(char **file, t_scene *scene)
 	i = 0;
 	player_pos = 0;
 	scene->map = malloc(sizeof(char *) * (strlen2(&(*file)) + 1));
+	if (!scene->map)
+		return (1);
 	while (*file)
 	{
 		if ((!i || !(file + 1)) && (first_nd_last(*file)))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 21:59:39 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 03:14:56 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 05:31:34 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	ft_close(int keycode, t_mlx *p)
 	if (keycode == 53)
 	{
 		p->close = 1;
-		ft_exit();
+		exit(0);
 	}
 	else
 		return (0);

@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:24:38 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 02:55:53 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 05:26:57 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ t_mlx	*p_init(char *path)
 	t_mlx	*p;
 
 	p = malloc(sizeof(t_mlx));
+	if (!p)
+		return (NULL);
 	ft_memset(p, 0, sizeof(t_mlx));
 	p->scene = scene_parse(path);
 	if (!p->scene)

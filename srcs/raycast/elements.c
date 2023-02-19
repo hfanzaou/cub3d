@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 23:09:38 by ajana             #+#    #+#             */
-/*   Updated: 2023/02/19 04:38:09 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 05:25:38 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	check_path(char *path, char **tex)
 
 	if (*tex)
 		return (ft_error("Duplicated texture identifiers\n"));
-	if (strcmp(&path[strlen(path) - 4], ".xpm"))
+	if (ft_strcmp(&path[ft_strlen(path) - 4], ".xpm"))
 		return (ft_error("Invalid texture format\n"));
 	fd = open(path, O_RDONLY);
 	if (fd == -1)

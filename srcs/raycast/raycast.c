@@ -6,7 +6,7 @@
 /*   By: ajana <ajana@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:30:29 by hfanzaou          #+#    #+#             */
-/*   Updated: 2023/02/19 05:22:55 by ajana            ###   ########.fr       */
+/*   Updated: 2023/02/19 05:29:36 by ajana            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_cor	*ft_hor(t_mlx *p, t_ray *ray, int f)
 
 	cor = malloc(sizeof(t_cor));
 	if (!cor)
-		exit(1);
+		return (NULL);
 	if (f == 1)
 		intersec(p, ray);
 	else
@@ -71,7 +71,7 @@ t_cor	*castone(t_mlx *p, t_ray *ray)
 	v->dis
 		= sqrt((p->x - v->x) * (p->x - v->x) + (p->y - v->y) * (p->y - v->y));
 	if (!v || !h)
-		exit(0);
+		return (NULL);
 	return (chose_inter(h, v, ray));
 }
 
@@ -89,6 +89,8 @@ void	ft_raycast(t_mlx *p)
 	while (i < 1200)
 	{
 		cor = castone(p, ray);
+		if (!cor)
+			return ;
 		ray->ray += ((p->fov) / (1200));
 		ray->index = i;
 		draw_wall(p, ray, cor);
