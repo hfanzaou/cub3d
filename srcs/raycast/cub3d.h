@@ -6,7 +6,7 @@
 /*   By: hfanzaou <hfanzaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 18:13:40 by idelfag           #+#    #+#             */
-/*   Updated: 2023/02/19 02:52:21 by hfanzaou         ###   ########.fr       */
+/*   Updated: 2023/02/19 03:01:55 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include "mlx.h"
 # include "libft/libft.h"
 
-enum tex_id
+enum e_tex_id
 {
 	north,
 	south,
@@ -94,41 +94,37 @@ typedef struct s_ray
 
 typedef struct s_cor
 {
-  float x;
-  float y;
-  float dis;
-  int f;
-}  t_cor;
+	float	x;
+	float	y;
+	float	dis;
+	int		f;
+}			t_cor;
 
 t_scene	*scene_parse(char *path);
-int     map_parse(char **file, t_scene *scene);
-int		  ft_error(char *err_msg);
-int		  strlen2(char **ptr);
-int     get_texture(t_cor *inter, t_ray *ray);
-int     textures_init(t_mlx *p);
-int     elements_check(char ***file, t_scene *scene);
-int     read_file(char *path, char **file, int lines_count);
-void    ft_free(char **ptr);
-int     map_check(char **file, t_scene *scene);
-int	    is_space(char c);
-int     got_all_elements(t_scene *scene);
-int     is_closed(char *line, char *up_line, char *down_line, int ind);
-char	  *get_next_line(int fd);
-int     lines_count(char *path);
-int     is_empty_line(char *line);
-
-
+int		map_parse(char **file, t_scene *scene);
+int		ft_error(char *err_msg);
+int		strlen2(char **ptr);
+int		get_texture(t_cor *inter, t_ray *ray);
+int		textures_init(t_mlx *p);
+int		elements_check(char ***file, t_scene *scene);
+int		read_file(char *path, char **file, int lines_count);
+void	ft_free(char **ptr);
+int		map_check(char **file, t_scene *scene);
+int		is_space(char c);
+int		got_all_elements(t_scene *scene);
+int		is_closed(char *line, char *up_line, char *down_line, int ind);
+char	*get_next_line(int fd);
+int		lines_count(char *path);
+int		is_empty_line(char *line);
 
 //===================HOOKS==================//
 int		key_hook(int key, t_mlx *p);
 int		key_hook2(int key, t_mlx *p);
 int		mouse_hook(int x, int y, t_mlx *p);
 
-
 //===============INITIALIZE==================//
 t_mlx	*p_init(char *path);
 int		step_init(t_mlx *p);
-
 
 //============drawing========//
 int		draw_mini(t_mlx *p);
@@ -136,7 +132,6 @@ int		draw_wall(t_mlx *p, t_ray *ray, t_cor *cor);
 int		check_collision(t_scene *map, int x, int y, int i);
 int		get_x(t_mlx *p, t_cor *cor, float wall_hight, t_ray *ray);
 int		get_color(t_tex *img, int x, int y);
-
 
 //============RAYCASTING=========//
 void	ft_raycast(t_mlx *p);
